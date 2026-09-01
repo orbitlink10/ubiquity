@@ -10,19 +10,28 @@ class ProductSeo
 {
     public static function brand(Product $product): string
     {
-        return self::columnValue($product, 'brand')
-            ?: (Str::contains(Str::lower($product->name.' '.$product->category?->name), 'mikrotik') ? 'MikroTik' : config('app.name', 'Mikrotik Kenya'));
+        if ($brand = self::columnValue($product, 'brand')) {
+            return self::normalizeBrand($brand);
+        }
+
+        $text = Str::lower($product->name.' '.$product->slug.' '.$product->sku.' '.$product->category?->name);
+
+        if (Str::contains($text, ['ubiquiti', 'ubiquity', 'unifi', 'airmax', 'airfiber', 'uisp', 'edgerouter', 'litebeam', 'nanobeam', 'nanostation', 'powerbeam'])) {
+            return 'Ubiquiti';
+        }
+
+        if (Str::contains($text, ['mikrotik', 'routeros'])) {
+            return 'MikroTik';
+        }
+
+        return config('app.name', 'Ubiquiti Kenya');
     }
 
     public static function displayName(Product $product): string
     {
         $name = trim(preg_replace('/\s+/u', ' ', $product->name) ?? $product->name);
-
-        if (self::brand($product) === 'MikroTik') {
-            $name = preg_replace('/\bmikrotik\b/i', 'MikroTik', $name) ?? $name;
-        }
-
-        $name = trim(preg_replace('/\s*[–—-]\s*$/u', '', $name)) ?? $name;
+        $name = self::normalizeBrandSpelling($name);
+        $name = trim(preg_replace('/\s*[-]\s*$/u', '', $name)) ?? $name;
 
         return $name !== '' ? $name : self::model($product);
     }
@@ -30,27 +39,34 @@ class ProductSeo
     public static function model(Product $product): string
     {
         if ($model = self::columnValue($product, 'model_number')) {
-            return trim(preg_replace('/\s*[–—-]\s*$/u', '', $model) ?? $model);
+            return trim(preg_replace('/\s*[-]\s*$/u', '', self::normalizeBrandSpelling($model)) ?? $model);
         }
 
         $name = trim(preg_replace('/\s+/u', ' ', $product->name) ?? $product->name);
-        $model = preg_replace('/^mikrotik\s+/i', '', $name) ?? $name;
-        $model = trim(preg_replace('/\s*[–—-]\s*$/u', '', $model)) ?? $model;
+        $model = preg_replace('/^ubiquiti\s+/i', '', $name) ?? $name;
+        $model = trim(preg_replace('/\s*[-]\s*$/u', '', self::normalizeBrandSpelling($model)) ?? $model);
 
-        return trim($model) !== '' ? trim($model) : $product->sku;
+        return trim($model) !== '' ? trim($model) : (string) ($product->sku ?: $product->slug);
     }
 
     public static function typeLabel(Product $product): string
     {
-        return match (MikrotikSeoCatalog::productIntentSlug($product)) {
-            MikrotikSeoCatalog::ROUTER_AUTHORITY_SLUG => 'Router',
-            'mikrotik-switches' => 'Switch',
-            'mikrotik-access-points' => 'Access Point',
-            'mikrotik-wireless' => 'Wireless System',
-            'mikrotik-lte-5g' => 'LTE Router',
-            'mikrotik-sfp-modules' => 'SFP Module',
-            'mikrotik-antennas' => 'Antenna',
-            'routeros' => 'Software',
+        return match (UbiquitiSeoCatalog::productIntentSlug($product)) {
+            'ubiquiti-access-points' => 'Access Point',
+            'ubiquiti-switches' => 'Switch',
+            'ubiquiti-cloud-gateways' => 'Cloud Gateway',
+            'ubiquiti-routers' => 'Router',
+            'ubiquiti-airmax' => 'airMAX Wireless',
+            'ubiquiti-point-to-point' => 'Point-to-Point Wireless',
+            'ubiquiti-airfiber' => 'airFiber',
+            'ubiquiti-uisp' => 'UISP Equipment',
+            'ubiquiti-cameras' => 'Camera',
+            'ubiquiti-nvr' => 'NVR',
+            'ubiquiti-access-control' => 'Access Control',
+            'ubiquiti-cloud-key' => 'Cloud Key',
+            'ubiquiti-poe-injectors' => 'PoE Injector',
+            'ubiquiti-antennas' => 'Antenna',
+            'ubiquiti-fiber' => 'Fiber Equipment',
             default => 'Networking Equipment',
         };
     }
@@ -61,16 +77,22 @@ class ProductSeo
             return $keyUse;
         }
 
-        $intent = MikrotikSeoCatalog::productIntentSlug($product);
-
-        return match ($intent) {
-            'mikrotik-switches' => 'Switching, aggregation and network expansion',
-            'mikrotik-access-points' => 'Managed Wi-Fi coverage for homes and offices',
-            'mikrotik-wireless' => 'Outdoor wireless links and ISP deployments',
-            'mikrotik-lte-5g' => 'LTE/5G internet and backup connectivity',
-            'mikrotik-sfp-modules' => 'Fibre uplinks and high-speed interconnects',
-            'routeros' => 'RouterOS routing, firewall and network management',
-            default => 'Routing for homes, offices, ISPs and branch networks',
+        return match (UbiquitiSeoCatalog::productIntentSlug($product)) {
+            'ubiquiti-access-points' => 'Managed WiFi coverage for homes, offices and business networks',
+            'ubiquiti-switches' => 'Switching, PoE power and UniFi network expansion',
+            'ubiquiti-cloud-gateways' => 'UniFi routing, security and network management',
+            'ubiquiti-routers' => 'Routing, VPN and internet gateway deployments',
+            'ubiquiti-airmax' => 'Outdoor wireless links and WISP deployments',
+            'ubiquiti-point-to-point' => 'Point-to-point wireless connectivity between sites',
+            'ubiquiti-airfiber' => 'High-capacity wireless backhaul',
+            'ubiquiti-uisp' => 'ISP routing, switching, wireless and fiber deployments',
+            'ubiquiti-cameras' => 'UniFi Protect video security and surveillance',
+            'ubiquiti-nvr' => 'UniFi Protect recording and video storage',
+            'ubiquiti-access-control' => 'Managed door access control and intercom installations',
+            'ubiquiti-poe-injectors' => 'Powering compatible PoE network devices',
+            'ubiquiti-antennas' => 'Outdoor wireless coverage and link planning',
+            'ubiquiti-fiber' => 'Fiber uplinks, modules and optical networking',
+            default => 'Ubiquiti network installation and expansion',
         };
     }
 
@@ -82,9 +104,9 @@ class ProductSeo
         $specs = [
             'Model' => self::model($product),
             'Brand' => self::brand($product),
-            'SKU' => $product->sku,
-            'Category' => $product->category?->name ?? 'MikroTik products',
-            'Current price' => 'KSh '.number_format((float) $product->price, 2),
+            'SKU' => (string) $product->sku,
+            'Category' => $product->category?->name ?? 'Ubiquiti products',
+            'Current price' => $product->price !== null ? 'KSh '.number_format((float) $product->price, 2) : '',
             'Availability' => $product->stock > 0 ? 'In stock' : 'Out of stock',
         ];
 
@@ -110,12 +132,14 @@ class ProductSeo
             return $custom;
         }
 
-        return match (MikrotikSeoCatalog::productIntentSlug($product)) {
-            'mikrotik-switches' => ['Office LAN expansion', 'Rack or cabinet switching', 'ISP or branch network aggregation'],
-            'mikrotik-access-points' => ['Indoor Wi-Fi coverage', 'Small office wireless networks', 'Managed RouterOS wireless deployments'],
-            'mikrotik-wireless' => ['Point-to-point wireless links', 'Outdoor broadband distribution', 'Remote site connectivity'],
-            'mikrotik-lte-5g' => ['Backup internet links', 'Remote offices and field sites', 'Mobile broadband where fibre is unavailable'],
-            default => ['Home and small office routing', 'Business internet edge routing', 'ISP customer or branch deployments'],
+        return match (UbiquitiSeoCatalog::productIntentSlug($product)) {
+            'ubiquiti-access-points' => ['Home and office WiFi coverage', 'Hotel, school and business wireless networks', 'Managed UniFi deployments'],
+            'ubiquiti-switches' => ['PoE for access points and cameras', 'Office LAN switching', 'Network rack expansion and uplinks'],
+            'ubiquiti-cloud-gateways' => ['UniFi network control', 'Business internet gateways', 'VPN and security gateway deployments'],
+            'ubiquiti-airmax', 'ubiquiti-point-to-point' => ['Point-to-point wireless links', 'WISP customer connections', 'Remote site connectivity'],
+            'ubiquiti-cameras' => ['Home and business CCTV', 'UniFi Protect camera systems', 'Outdoor and indoor security monitoring'],
+            'ubiquiti-access-control' => ['Door access control', 'Office entry management', 'Intercom and credential-based access'],
+            default => ['Home network upgrades', 'Business network deployments', 'ISP and installer projects'],
         };
     }
 
@@ -130,7 +154,7 @@ class ProductSeo
     public static function compatibility(Product $product): string
     {
         return self::columnValue($product, 'compatibility')
-            ?: 'Works with compatible MikroTik RouterOS networks and standard Ethernet networking equipment. Confirm port, power and mounting requirements before purchase.';
+            ?: 'Works with compatible Ubiquiti UniFi, UISP or standard Ethernet networking equipment. Confirm controller, power and mounting requirements before purchase.';
     }
 
     public static function powerRequirements(Product $product): string
@@ -168,7 +192,7 @@ class ProductSeo
     public static function whatsInBox(Product $product): array
     {
         return self::linesFromColumn($product, 'whats_in_box')
-            ?: ['MikroTik '.self::displayName($product).' unit', 'Included accessories as supplied by the seller or manufacturer package'];
+            ?: [self::brand($product).' '.self::model($product).' unit', 'Included accessories as supplied by the seller or manufacturer package'];
     }
 
     /**
@@ -192,7 +216,9 @@ class ProductSeo
             ],
             [
                 'question' => 'What is the current price of '.$displayName.'?',
-                'answer' => 'The current listed price is KSh '.number_format((float) $product->price, 2).'. Prices are generated from the product catalogue and may change when inventory is updated.',
+                'answer' => $product->price !== null
+                    ? 'The current listed price is KSh '.number_format((float) $product->price, 2).'. Prices are generated from the product catalogue and may change when inventory is updated.'
+                    : 'Price is not published yet. Contact the seller to confirm current pricing before ordering.',
             ],
         ];
     }
@@ -202,35 +228,33 @@ class ProductSeo
      */
     public static function comparisonLinks(Product $product): array
     {
-        $pairs = [
-            ['rb760igs', 'rb750gr3', 'RB760iGS vs RB750Gr3'],
-            ['rb4011', 'rb5009', 'RB4011 vs RB5009'],
-            ['l009uigs-rm', 'l009uigs-2haxd-in', 'L009UiGS-RM vs L009UiGS-2HaxD-IN'],
-            ['ccr2004', 'ccr2116', 'CCR2004 vs CCR2116'],
-        ];
-
-        $haystack = Str::lower($product->name.' '.$product->slug.' '.$product->sku);
+        $labels = UbiquitiSeoCatalog::comparisonPages();
         $links = [];
+        $haystack = Str::lower($product->name.' '.$product->slug.' '.$product->sku);
 
-        foreach ($pairs as [$left, $right, $label]) {
-            if (! Str::contains($haystack, [$left, $right])) {
+        foreach (UbiquitiSeoCatalog::comparisonProducts() as $slug => [$left, $right]) {
+            $leftMatch = self::containsProductNeedle($haystack, $left);
+            $rightMatch = self::containsProductNeedle($haystack, $right);
+
+            if (! $leftMatch && ! $rightMatch) {
                 continue;
             }
 
-            $otherNeedle = Str::contains($haystack, $left) ? $right : $left;
+            $otherNeedle = $leftMatch ? $right : $left;
             $otherProduct = Product::query()
                 ->active()
                 ->where(function ($query) use ($otherNeedle): void {
-                    $query->where('slug', 'like', '%'.$otherNeedle.'%')
-                        ->orWhere('name', 'like', '%'.$otherNeedle.'%')
-                        ->orWhere('sku', 'like', '%'.$otherNeedle.'%');
+                    $needleSlug = Str::slug(str_replace('+', ' plus ', $otherNeedle));
+                    $query->where('name', 'like', '%'.$otherNeedle.'%')
+                        ->orWhere('sku', 'like', '%'.$otherNeedle.'%')
+                        ->orWhere('slug', 'like', '%'.$needleSlug.'%');
                 })
                 ->first();
 
             if ($otherProduct) {
                 $links[] = [
-                    'label' => $label,
-                    'url' => route('comparison.show', Str::slug($label)),
+                    'label' => $labels[$slug] ?? $slug,
+                    'url' => route('comparison.show', $slug),
                 ];
             }
         }
@@ -322,5 +346,31 @@ class ProductSeo
         $key = $product->getTable().'.'.$column;
 
         return $cache[$key] ??= Schema::hasColumn($product->getTable(), $column);
+    }
+
+    private static function normalizeBrand(string $brand): string
+    {
+        return self::normalizeBrandSpelling($brand);
+    }
+
+    private static function normalizeBrandSpelling(string $value): string
+    {
+        $value = preg_replace('/\bubiquity\b/i', 'Ubiquiti', $value) ?? $value;
+        $value = preg_replace('/\bubiquiti\b/i', 'Ubiquiti', $value) ?? $value;
+        $value = preg_replace('/\bunifi\b/i', 'UniFi', $value) ?? $value;
+        $value = preg_replace('/\bairmax\b/i', 'airMAX', $value) ?? $value;
+        $value = preg_replace('/\bairfiber\b/i', 'airFiber', $value) ?? $value;
+        $value = preg_replace('/\buisp\b/i', 'UISP', $value) ?? $value;
+        $value = preg_replace('/\bmikrotik\b/i', 'MikroTik', $value) ?? $value;
+
+        return $value;
+    }
+
+    private static function containsProductNeedle(string $haystack, string $needle): bool
+    {
+        $needleLower = Str::lower($needle);
+        $needleSlug = Str::slug(str_replace('+', ' plus ', $needle));
+
+        return Str::contains($haystack, $needleLower) || Str::contains($haystack, $needleSlug);
     }
 }

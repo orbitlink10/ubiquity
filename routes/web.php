@@ -7,22 +7,26 @@ use App\Http\Controllers\ComparisonController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\VendorController;
-use App\Support\MikrotikSeoCatalog;
+use App\Support\UbiquitiSeoCatalog;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [StorefrontController::class, 'index'])->name('home');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/compare/{comparison}', [ComparisonController::class, 'show'])
-    ->where('comparison', 'rb760igs-vs-rb750gr3|rb4011-vs-rb5009|l009uigs-rm-vs-l009uigs-2haxd-in|ccr2004-vs-ccr2116')
+    ->where('comparison', 'u6-plus-vs-u6-pro|u6-pro-vs-u6-lr|u7-pro-vs-u6-pro|u7-pro-vs-u7-pro-max|cloud-gateway-ultra-vs-cloud-gateway-max')
     ->name('comparison.show');
+Route::get('/blog', [StorefrontController::class, 'blogIndex'])->name('blog.index');
+Route::get('/blog/{page}', [StorefrontController::class, 'showBlogPost'])
+    ->where('page', '[A-Za-z0-9-]+')
+    ->name('blog.show');
 Route::get('/category/{category}', [StorefrontController::class, 'showCategory'])->name('category.show');
 Route::get('/product/{product}', [StorefrontController::class, 'show'])->name('product.show');
 Route::get('/products/{product}', [StorefrontController::class, 'redirectLegacyProduct']);
 Route::get('/categories/{category}', [StorefrontController::class, 'redirectLegacyCategory']);
 Route::get('/pages/{page}', [StorefrontController::class, 'redirectLegacyPage']);
 Route::get('/{categorySlug}', [StorefrontController::class, 'redirectTopLevelCategory'])
-    ->where('categorySlug', implode('|', array_keys(MikrotikSeoCatalog::topLevelCategoryRedirects())));
+    ->where('categorySlug', implode('|', array_keys(UbiquitiSeoCatalog::topLevelCategoryRedirects())));
 Route::get('/uploads/products/{filename}', function (string $filename) {
     $paths = [
         public_path('uploads/products/'.$filename),

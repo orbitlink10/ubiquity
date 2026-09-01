@@ -12,28 +12,28 @@ class SeoMetadata
 {
     public static function homepageTitle(int $page = 1): string
     {
-        $title = 'MikroTik Kenya | Routers, Switches & Networking Equipment';
+        $title = 'Ubiquiti Kenya | UniFi, airMAX & Networking Equipment';
 
         return $page > 1 ? $title.' - Page '.$page : $title;
     }
 
     public static function homepageDescription(): string
     {
-        return 'Shop genuine MikroTik routers, switches, access points and networking equipment in Kenya. Compare prices, specifications and availability with fast delivery across Kenya.';
+        return 'Shop Ubiquiti UniFi access points, switches, gateways, airMAX radios, cameras and networking equipment in Kenya. Compare prices, specifications and availability.';
     }
 
     public static function categoryTitle(Category $category, int $page = 1): string
     {
         $categoryName = $category->name;
-        $mappedTitle = MikrotikSeoCatalog::categoryTitles()[Str::slug($category->slug)] ?? null;
+        $mappedTitle = UbiquitiSeoCatalog::categoryTitles()[Str::slug($category->slug)] ?? null;
         $categoryTitle = $mappedTitle
             ?: (Str::contains(Str::lower($categoryName), ['kenya', 'price'])
-                ? $categoryName.' | MikroTik Kenya'
-                : $categoryName.' in Kenya | MikroTik Kenya');
+                ? $categoryName.' | Ubiquiti Kenya'
+                : $categoryName.' in Kenya | Ubiquiti Kenya');
 
         $title = self::columnValue($category, 'seo_title')
-            ?: (MikrotikSeoCatalog::isRouterAuthorityCategory($category)
-                ? MikrotikSeoCatalog::categoryTitles()[MikrotikSeoCatalog::ROUTER_AUTHORITY_SLUG]
+            ?: (UbiquitiSeoCatalog::isRouterAuthorityCategory($category)
+                ? UbiquitiSeoCatalog::categoryTitles()[UbiquitiSeoCatalog::ROUTER_AUTHORITY_SLUG]
                 : $categoryTitle);
 
         return $page > 1 ? $title.' - Page '.$page : $title;
@@ -55,10 +55,7 @@ class SeoMetadata
             return $customTitle;
         }
 
-        $model = ProductSeo::model($product);
-        $typeLabel = ProductSeo::typeLabel($product);
-
-        return Str::limit($model.' Price in Kenya | MikroTik '.$typeLabel, 78, '');
+        return Str::limit(ProductSeo::displayName($product).' Price in Kenya | Ubiquiti Kenya', 78, '');
     }
 
     public static function productDescription(Product $product): string
@@ -90,6 +87,11 @@ class SeoMetadata
     public static function canonicalOverride(object $model): ?string
     {
         return self::columnValue($model, 'canonical_url');
+    }
+
+    public static function heading(object $model, string $fallback): string
+    {
+        return self::columnValue($model, 'h1') ?: $fallback;
     }
 
     public static function robots(object $model): ?string

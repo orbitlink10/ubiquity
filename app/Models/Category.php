@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Schema;
 
@@ -14,6 +15,8 @@ class Category extends Model
 
     protected $fillable = [
         'name',
+        'h1',
+        'focus_keyword',
         'meta_description',
         'slug',
         'parent_id',
@@ -49,6 +52,8 @@ class Category extends Model
 
         return Schema::hasTable($table)
             && Schema::hasColumn($table, 'seo_title')
+            && Schema::hasColumn($table, 'h1')
+            && Schema::hasColumn($table, 'focus_keyword')
             && Schema::hasColumn($table, 'canonical_url')
             && Schema::hasColumn($table, 'intro')
             && Schema::hasColumn($table, 'seo_content')
@@ -73,5 +78,10 @@ class Category extends Model
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function assignedProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class)->withTimestamps();
     }
 }

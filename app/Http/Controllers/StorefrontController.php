@@ -8,21 +8,22 @@ use App\Models\Page;
 use App\Models\Product;
 use App\Models\Testimonial;
 use App\Support\CanonicalUrl;
-use App\Support\MikrotikSeoCatalog;
 use App\Support\ProductContent;
 use App\Support\ProductSeo;
 use App\Support\SeoMetadata;
+use App\Support\UbiquitiSeoCatalog;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class StorefrontController extends Controller
 {
-    private const ROUTER_PRICES_CATEGORY_NAME = 'Mikrotik Router Prices in Kenya';
+    private const ROUTER_PRICES_CATEGORY_NAME = 'Ubiquiti Routers';
 
-    private const ROUTER_PRICES_CATEGORY_SLUG = 'mikrotik-router-prices-in-kenya';
+    private const ROUTER_PRICES_CATEGORY_SLUG = UbiquitiSeoCatalog::ROUTER_AUTHORITY_SLUG;
 
     private const ROUTER_PRODUCTS_LIMIT = 6;
 
@@ -80,7 +81,9 @@ class StorefrontController extends Controller
     public function showPage(string $page): View|RedirectResponse
     {
         $requestedSlug = Str::slug($page);
-        $page = Page::query()->whereRaw('LOWER(slug) = ?', [Str::lower($requestedSlug)])->first();
+        $page = $this->publicPageQuery()
+            ->whereRaw('LOWER(slug) = ?', [Str::lower($requestedSlug)])
+            ->first();
 
         if (! $page) {
             return $this->showTrustPage($requestedSlug);
@@ -94,6 +97,42 @@ class StorefrontController extends Controller
             'page' => $page,
             'pageBody' => ProductContent::sanitizeRichText($page->body) ?: '<p>No content available.</p>',
             'pageMetaDescription' => SeoMetadata::pageDescription($page, ProductContent::excerpt($page->body, 160)),
+        ]);
+    }
+
+    public function blogIndex(): View
+    {
+        $posts = $this->publicPageQuery()
+            ->where('type', 'post')
+            ->latest()
+            ->paginate(12);
+
+        return view('blog.index', [
+            'posts' => $posts,
+            'blogCategories' => $this->blogCategories(),
+            'canonicalUrl' => CanonicalUrl::route('blog.index'),
+        ]);
+    }
+
+    public function showBlogPost(string $page): View|RedirectResponse
+    {
+        $requestedSlug = Str::slug($page);
+        $page = $this->publicPageQuery()
+            ->where('type', 'post')
+            ->whereRaw('LOWER(slug) = ?', [Str::lower($requestedSlug)])
+            ->first();
+
+        abort_unless($page, 404);
+
+        if ($page->slug !== $requestedSlug) {
+            return redirect()->route('blog.show', ['page' => $page->slug], 301);
+        }
+
+        return view('page.show', [
+            'page' => $page,
+            'pageBody' => ProductContent::sanitizeRichText($page->body) ?: '<p>No content available.</p>',
+            'pageMetaDescription' => SeoMetadata::pageDescription($page, ProductContent::excerpt($page->body, 160)),
+            'canonicalRoute' => 'blog.show',
         ]);
     }
 
@@ -124,7 +163,7 @@ class StorefrontController extends Controller
 
     public function redirectTopLevelCategory(string $categorySlug): RedirectResponse
     {
-        $targetSlug = MikrotikSeoCatalog::targetSlugForTopLevel($categorySlug);
+        $targetSlug = UbiquitiSeoCatalog::targetSlugForTopLevel($categorySlug);
 
         abort_unless($targetSlug, 404);
 
@@ -147,6 +186,8 @@ class StorefrontController extends Controller
         $search = trim((string) $request->query('search', ''));
         $searchSlug = Str::slug($search);
         $normalizedSearch = Str::lower($search);
+        $catalogFilters = $this->catalogFilters($request);
+        $hasCatalogFilters = $this->hasCatalogFilters($catalogFilters);
         $productsQuery = Product::query()
             ->with(['vendor', 'category', 'images' => fn ($query) => $query->orderByDesc('is_primary')->orderBy('sort_order')])
             ->active();
@@ -155,7 +196,7 @@ class StorefrontController extends Controller
         if ($currentCategory) {
             $currentCategory->loadMissing('children', 'parent');
             $selectedCategory = $currentCategory->parent_id ?: $currentCategory->id;
-            $productsQuery->whereIn('category_id', $this->catalogCategoryIds($currentCategory));
+            $this->constrainProductsToCategory($productsQuery, $currentCategory);
         }
 
         if ($search !== '' && ! $currentCategory) {
@@ -164,6 +205,10 @@ class StorefrontController extends Controller
                 ->where(function ($query) use ($normalizedSearch, $searchSlug): void {
                     $query->whereRaw('LOWER(name) = ?', [$normalizedSearch])
                         ->orWhereRaw('LOWER(sku) = ?', [$normalizedSearch]);
+
+                    if (SeoMetadata::columnReady('products', 'model_number')) {
+                        $query->orWhereRaw('LOWER(model_number) = ?', [$normalizedSearch]);
+                    }
 
                     if ($searchSlug !== '') {
                         $query->orWhere('slug', $searchSlug);
@@ -178,18 +223,26 @@ class StorefrontController extends Controller
 
         if ($search !== '') {
             $productsQuery->where(function ($query) use ($search, $searchSlug): void {
-                $query->where('name', 'like', '%'.$search.'%')
-                    ->orWhere('sku', 'like', '%'.$search.'%')
-                    ->orWhere('description', 'like', '%'.$search.'%')
-                    ->orWhere('meta_description', 'like', '%'.$search.'%')
-                    ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery->where('name', 'like', '%'.$search.'%'))
-                    ->orWhereHas('vendor', fn ($vendorQuery) => $vendorQuery->where('shop_name', 'like', '%'.$search.'%'));
+                    $query->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('sku', 'like', '%'.$search.'%')
+                        ->orWhere('description', 'like', '%'.$search.'%')
+                        ->orWhere('meta_description', 'like', '%'.$search.'%')
+                        ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery->where('name', 'like', '%'.$search.'%'))
+                        ->orWhereHas('vendor', fn ($vendorQuery) => $vendorQuery->where('shop_name', 'like', '%'.$search.'%'));
 
-                if ($searchSlug !== '') {
-                    $query->orWhere('slug', 'like', '%'.$searchSlug.'%');
-                }
-            });
+                    foreach (['model_number', 'brand', 'key_specifications', 'technical_specifications'] as $column) {
+                        if (SeoMetadata::columnReady('products', $column)) {
+                            $query->orWhere($column, 'like', '%'.$search.'%');
+                        }
+                    }
+
+                    if ($searchSlug !== '') {
+                        $query->orWhere('slug', 'like', '%'.$searchSlug.'%');
+                    }
+                });
         }
+
+        $this->applyCatalogFilters($productsQuery, $catalogFilters);
 
         $homepageProductCategory = $search === '' && ! $currentCategory
             ? $this->routerPricesCategory()
@@ -215,7 +268,9 @@ class StorefrontController extends Controller
             $homepageFeaturedProducts = Product::query()
                 ->with(['vendor', 'category', 'images' => fn ($query) => $query->orderByDesc('is_primary')->orderBy('sort_order')])
                 ->active()
-                ->whereIn('category_id', $this->catalogCategoryIds($homepageProductCategory))
+                ->where(function (Builder $query) use ($homepageProductCategory): void {
+                    $this->constrainProductsToCategory($query, $homepageProductCategory);
+                })
                 ->latest()
                 ->limit(self::ROUTER_PRODUCTS_LIMIT)
                 ->get();
@@ -227,11 +282,13 @@ class StorefrontController extends Controller
             $productsQuery->whereNotIn('id', $homepageFeaturedProducts->modelKeys());
         }
 
-        $products = $productsQuery->latest()->paginate(24)->withQueryString();
+        $products = $this->applyCatalogSort($productsQuery, $catalogFilters['sort'])
+            ->paginate(24)
+            ->withQueryString();
         $usedCategoryFallback = false;
 
-        if ($products->total() === 0 && $currentCategory && MikrotikSeoCatalog::isBroadMikrotikCategory($currentCategory)) {
-            $products = MikrotikSeoCatalog::mikrotikProductsQuery()
+        if ($products->total() === 0 && $currentCategory && UbiquitiSeoCatalog::isBroadUbiquitiCategory($currentCategory)) {
+            $products = UbiquitiSeoCatalog::ubiquitiProductsQuery()
                 ->latest()
                 ->paginate(24)
                 ->withQueryString();
@@ -239,24 +296,26 @@ class StorefrontController extends Controller
         }
 
         $routerPriceTableProducts = collect();
-        $isRouterAuthorityPage = $currentCategory && MikrotikSeoCatalog::isRouterAuthorityCategory($currentCategory);
+        $isRouterAuthorityPage = $currentCategory && UbiquitiSeoCatalog::isRouterAuthorityCategory($currentCategory);
 
         if ($isRouterAuthorityPage) {
             $routerPriceTableProducts = Product::query()
                 ->with(['vendor', 'category', 'images' => fn ($query) => $query->orderByDesc('is_primary')->orderBy('sort_order')])
                 ->active()
-                ->whereIn('category_id', $this->catalogCategoryIds($currentCategory))
+                ->where(function (Builder $query) use ($currentCategory): void {
+                    $this->constrainProductsToCategory($query, $currentCategory);
+                })
                 ->orderBy('name')
                 ->limit(48)
                 ->get();
 
             if ($routerPriceTableProducts->isEmpty()) {
-                $routerPriceTableProducts = MikrotikSeoCatalog::mikrotikProductsQuery()
+                $routerPriceTableProducts = UbiquitiSeoCatalog::ubiquitiProductsQuery()
                     ->where(function (Builder $query): void {
                         $query->where('name', 'like', '%router%')
-                            ->orWhere('name', 'like', '%RB%')
-                            ->orWhere('name', 'like', '%CCR%')
-                            ->orWhere('name', 'like', '%hEX%')
+                            ->orWhere('name', 'like', '%gateway%')
+                            ->orWhere('name', 'like', '%dream machine%')
+                            ->orWhere('name', 'like', '%edgerouter%')
                             ->orWhere('slug', 'like', '%router%');
                     })
                     ->orderBy('name')
@@ -272,14 +331,18 @@ class StorefrontController extends Controller
             'homepageProductCategory' => $homepageProductCategory,
             'homepageFeaturedProducts' => $homepageFeaturedProducts,
             'products' => $products,
+            'articleResults' => $this->articleSearchResults($search),
             'search' => $search,
+            'catalogFilters' => $catalogFilters,
+            'hasCatalogFilters' => $hasCatalogFilters,
+            'filterOptions' => $this->filterOptions(),
             'selectedCategory' => $selectedCategory,
             'testimonials' => Testimonial::homepageItems(),
             'currentCategory' => $currentCategory,
             'usedCategoryFallback' => $usedCategoryFallback,
             'isRouterAuthorityPage' => $isRouterAuthorityPage,
             'routerPriceTableProducts' => $routerPriceTableProducts,
-            'routerFaqItems' => MikrotikSeoCatalog::routerFaqItems(),
+            'routerFaqItems' => UbiquitiSeoCatalog::routerFaqItems(),
             'relatedCategories' => $this->relatedCategories($currentCategory),
             'homepageComparisonLinks' => $search === '' && ! $currentCategory
                 ? $this->homepageComparisonLinks()
@@ -287,15 +350,184 @@ class StorefrontController extends Controller
         ]);
     }
 
+    private function publicPageQuery(): Builder
+    {
+        return Page::query()
+            ->when(Page::publicationFieldsReady(), fn (Builder $query) => $query->where('status', 'published'));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function blogCategories(): array
+    {
+        if (! Page::publicationFieldsReady()) {
+            return [];
+        }
+
+        return Page::query()
+            ->where('type', 'post')
+            ->where('status', 'published')
+            ->whereNotNull('blog_category')
+            ->distinct()
+            ->orderBy('blog_category')
+            ->pluck('blog_category')
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    private function articleSearchResults(string $search)
+    {
+        if ($search === '' || ! Page::storageReady()) {
+            return collect();
+        }
+
+        return $this->publicPageQuery()
+            ->where('type', 'post')
+            ->where(function (Builder $query) use ($search): void {
+                $query->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('slug', 'like', '%'.Str::slug($search).'%')
+                    ->orWhere('meta_title', 'like', '%'.$search.'%')
+                    ->orWhere('meta_description', 'like', '%'.$search.'%');
+
+                if (SeoMetadata::columnReady('pages', 'blog_category')) {
+                    $query->orWhere('blog_category', 'like', '%'.$search.'%');
+                }
+            })
+            ->latest()
+            ->limit(8)
+            ->get();
+    }
+
+    /**
+     * @return array{availability: ?string, brand: ?string, price_min: ?float, price_max: ?float, sort: string}
+     */
+    private function catalogFilters(Request $request): array
+    {
+        $availability = $request->query('availability');
+        $availability = in_array($availability, ['in_stock', 'out_of_stock'], true) ? $availability : null;
+
+        $sort = $request->query('sort');
+        $sort = in_array($sort, ['latest', 'name_asc', 'price_asc', 'price_desc'], true) ? $sort : 'latest';
+
+        return [
+            'availability' => $availability,
+            'brand' => $this->cleanFilterText($request->query('brand')),
+            'price_min' => $this->cleanFilterNumber($request->query('price_min')),
+            'price_max' => $this->cleanFilterNumber($request->query('price_max')),
+            'sort' => $sort,
+        ];
+    }
+
+    /**
+     * @param  array{availability: ?string, brand: ?string, price_min: ?float, price_max: ?float, sort: string}  $filters
+     */
+    private function hasCatalogFilters(array $filters): bool
+    {
+        return $filters['availability'] !== null
+            || $filters['brand'] !== null
+            || $filters['price_min'] !== null
+            || $filters['price_max'] !== null
+            || $filters['sort'] !== 'latest';
+    }
+
+    /**
+     * @param  array{availability: ?string, brand: ?string, price_min: ?float, price_max: ?float, sort: string}  $filters
+     */
+    private function applyCatalogFilters(Builder $query, array $filters): void
+    {
+        if ($filters['availability'] === 'in_stock') {
+            $query->where('stock', '>', 0);
+        } elseif ($filters['availability'] === 'out_of_stock') {
+            $query->where('stock', '<=', 0);
+        }
+
+        if ($filters['brand'] !== null && SeoMetadata::columnReady('products', 'brand')) {
+            $query->where('brand', $filters['brand']);
+        }
+
+        if ($filters['price_min'] !== null) {
+            $query->where('price', '>=', $filters['price_min']);
+        }
+
+        if ($filters['price_max'] !== null) {
+            $query->where('price', '<=', $filters['price_max']);
+        }
+    }
+
+    private function applyCatalogSort(Builder $query, string $sort): Builder
+    {
+        return match ($sort) {
+            'name_asc' => $query->orderBy('name'),
+            'price_asc' => $query->orderByRaw('price IS NULL')->orderBy('price'),
+            'price_desc' => $query->orderByDesc('price'),
+            default => $query->latest(),
+        };
+    }
+
+    /**
+     * @return array{brands: array<int, string>}
+     */
+    private function filterOptions(): array
+    {
+        $brands = SeoMetadata::columnReady('products', 'brand')
+            ? Product::query()
+                ->active()
+                ->whereNotNull('brand')
+                ->distinct()
+                ->orderBy('brand')
+                ->pluck('brand')
+                ->filter()
+                ->values()
+                ->all()
+            : [];
+
+        return [
+            'brands' => $brands,
+        ];
+    }
+
+    private function constrainProductsToCategory(Builder $query, Category $category): void
+    {
+        $categoryIds = $this->catalogCategoryIds($category);
+
+        $query->where(function (Builder $categoryQuery) use ($categoryIds): void {
+            $categoryQuery->whereIn('category_id', $categoryIds);
+
+            if (Product::categoryAssignmentsReady()) {
+                $categoryQuery->orWhereHas('categories', fn (Builder $assignedCategoryQuery) => $assignedCategoryQuery->whereIn('categories.id', $categoryIds));
+            }
+        });
+    }
+
+    private function cleanFilterText(mixed $value): ?string
+    {
+        $text = trim(preg_replace('/\s+/u', ' ', strip_tags((string) $value)) ?? '');
+
+        return $text !== '' ? Str::limit($text, 80, '') : null;
+    }
+
+    private function cleanFilterNumber(mixed $value): ?float
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        $number = filter_var($value, FILTER_VALIDATE_FLOAT);
+
+        return $number !== false && $number >= 0 ? (float) $number : null;
+    }
+
     /**
      * @return array<int, array{url: string, label: string}>
      */
     private function homepageComparisonLinks(): array
     {
-        $labels = MikrotikSeoCatalog::comparisonPages();
+        $labels = UbiquitiSeoCatalog::comparisonPages();
         $links = [];
 
-        foreach (MikrotikSeoCatalog::resolvableComparisonSlugs() as $slug) {
+        foreach (UbiquitiSeoCatalog::resolvableComparisonSlugs() as $slug) {
             $links[] = [
                 'url' => route('comparison.show', $slug),
                 'label' => $labels[$slug] ?? $slug,
@@ -334,7 +566,9 @@ class StorefrontController extends Controller
         return $candidates->first(function (Category $category): bool {
             return Product::query()
                 ->active()
-                ->whereIn('category_id', $this->catalogCategoryIds($category))
+                ->where(function (Builder $query) use ($category): void {
+                    $this->constrainProductsToCategory($query, $category);
+                })
                 ->exists();
         }) ?: $candidates->first();
     }
@@ -345,10 +579,10 @@ class StorefrontController extends Controller
     private function routerAuthoritySlugs(): array
     {
         return array_values(array_unique(array_merge(
-            [self::ROUTER_PRICES_CATEGORY_SLUG, MikrotikSeoCatalog::ROUTER_AUTHORITY_SLUG],
+            [self::ROUTER_PRICES_CATEGORY_SLUG, UbiquitiSeoCatalog::ROUTER_AUTHORITY_SLUG],
             array_keys(array_filter(
-                MikrotikSeoCatalog::legacyCategoryRedirects(),
-                fn (string $target): bool => $target === MikrotikSeoCatalog::ROUTER_AUTHORITY_SLUG
+                UbiquitiSeoCatalog::legacyCategoryRedirects(),
+                fn (string $target): bool => $target === UbiquitiSeoCatalog::ROUTER_AUTHORITY_SLUG
             ))
         )));
     }
@@ -370,7 +604,7 @@ class StorefrontController extends Controller
     private function resolveCategory(string $slug, bool $forceRedirect = false): Category|RedirectResponse
     {
         $requestedSlug = Str::slug($slug);
-        $legacyTarget = MikrotikSeoCatalog::targetSlugForLegacy($requestedSlug);
+        $legacyTarget = UbiquitiSeoCatalog::targetSlugForLegacy($requestedSlug);
 
         if ($legacyTarget && ($forceRedirect || $legacyTarget !== $requestedSlug)) {
             $targetCategory = Category::query()->where('slug', $legacyTarget)->first();
@@ -382,14 +616,14 @@ class StorefrontController extends Controller
 
         $category = Category::query()->whereRaw('LOWER(slug) = ?', [Str::lower($requestedSlug)])->first();
 
-        if (! $category && $requestedSlug === MikrotikSeoCatalog::ROUTER_AUTHORITY_SLUG) {
+        if (! $category && $requestedSlug === UbiquitiSeoCatalog::ROUTER_AUTHORITY_SLUG) {
             $category = $this->routerPricesCategory();
         }
 
         abort_unless($category, 404);
 
         if ($category->slug !== $requestedSlug) {
-            if ($requestedSlug === MikrotikSeoCatalog::ROUTER_AUTHORITY_SLUG && MikrotikSeoCatalog::isRouterAuthorityCategory($category)) {
+            if ($requestedSlug === UbiquitiSeoCatalog::ROUTER_AUTHORITY_SLUG && UbiquitiSeoCatalog::isRouterAuthorityCategory($category)) {
                 return $category;
             }
 
@@ -423,12 +657,12 @@ class StorefrontController extends Controller
         $trustPages = [
             'about-us' => [
                 'title' => 'About Us',
-                'heading' => 'About Mikrotik Kenya',
-                'summary' => 'Information about the business behind this MikroTik ecommerce website can be added from the admin content area.',
+                'heading' => 'About Ubiquiti Kenya',
+                'summary' => 'Information about the business behind this Ubiquiti product website can be added from the admin content area.',
             ],
             'contact-us' => [
                 'title' => 'Contact Us',
-                'heading' => 'Contact Mikrotik Kenya',
+                'heading' => 'Contact Ubiquiti Kenya',
                 'summary' => 'Use the available contact details below to enquire about products, quotations, delivery and support.',
             ],
             'delivery-policy' => [
@@ -469,25 +703,25 @@ class StorefrontController extends Controller
 
     private function featuredCategories()
     {
-        $primarySlugs = array_keys(MikrotikSeoCatalog::primaryCategories());
+        $primarySlugs = array_keys(UbiquitiSeoCatalog::primaryCategories());
         $featuredSlugs = array_values(array_unique(array_merge($primarySlugs, $this->routerAuthoritySlugs())));
 
         return Category::query()
             ->whereIn('slug', $featuredSlugs)
             ->get()
             ->sortBy(function (Category $category) use ($primarySlugs): int {
-                $targetSlug = MikrotikSeoCatalog::targetSlugForLegacy($category->slug) ?: $category->slug;
+                $targetSlug = UbiquitiSeoCatalog::targetSlugForLegacy($category->slug) ?: $category->slug;
                 $position = array_search($targetSlug, $primarySlugs, true);
 
                 return $position === false ? 999 : $position;
             })
-            ->unique(fn (Category $category): string => MikrotikSeoCatalog::targetSlugForLegacy($category->slug) ?: $category->slug)
+            ->unique(fn (Category $category): string => UbiquitiSeoCatalog::targetSlugForLegacy($category->slug) ?: $category->slug)
             ->values();
     }
 
     private function relatedCategories(?Category $currentCategory)
     {
-        $primarySlugs = array_keys(MikrotikSeoCatalog::primaryCategories());
+        $primarySlugs = array_keys(UbiquitiSeoCatalog::primaryCategories());
 
         return Category::query()
             ->whereIn('slug', $primarySlugs)

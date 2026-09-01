@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\HomepageContent;
+use App\Models\Page;
 use App\Models\Product;
 
 class StructuredData
@@ -12,14 +13,12 @@ class StructuredData
      */
     public static function product(Product $product, array $images, string $description, string $canonicalUrl): array
     {
-        return [
+        $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'Product',
             'name' => ProductSeo::displayName($product),
             'image' => array_values(array_filter($images)),
             'description' => $description,
-            'sku' => $product->sku,
-            'mpn' => ProductSeo::model($product),
             'brand' => [
                 '@type' => 'Brand',
                 'name' => ProductSeo::brand($product),
@@ -34,10 +33,89 @@ class StructuredData
                     : 'https://schema.org/OutOfStock',
                 'seller' => [
                     '@type' => 'Organization',
-                    'name' => config('business.name', config('app.name', 'Mikrotik Kenya')),
+                    'name' => config('business.name', config('app.name', 'Ubiquiti Kenya')),
                 ],
             ],
         ];
+
+        if (trim((string) $product->sku) !== '') {
+            $schema['sku'] = $product->sku;
+        }
+
+        if (trim(ProductSeo::model($product)) !== '') {
+            $schema['mpn'] = ProductSeo::model($product);
+        }
+
+        if ($product->price === null) {
+            unset($schema['offers']['price']);
+        }
+
+        return $schema;
+    }
+
+    /**
+     * @param  array<int, Product>  $products
+     */
+    public static function collectionPage(string $name, string $description, string $url, iterable $products): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'CollectionPage',
+            'name' => $name,
+            'description' => $description,
+            'url' => $url,
+            'mainEntity' => self::itemList($products, $url),
+        ];
+    }
+
+    /**
+     * @param  iterable<int, Product>  $products
+     */
+    public static function itemList(iterable $products, string $url): array
+    {
+        $items = [];
+        $position = 1;
+
+        foreach ($products as $product) {
+            $items[] = [
+                '@type' => 'ListItem',
+                'position' => $position++,
+                'url' => CanonicalUrl::route('product.show', $product),
+                'name' => ProductSeo::displayName($product),
+            ];
+        }
+
+        return [
+            '@type' => 'ItemList',
+            'url' => $url,
+            'itemListElement' => $items,
+        ];
+    }
+
+    public static function article(Page $page, string $description, string $canonicalUrl): array
+    {
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BlogPosting',
+            'headline' => SeoMetadata::heading($page, $page->title),
+            'description' => $description,
+            'url' => $canonicalUrl,
+            'mainEntityOfPage' => $canonicalUrl,
+        ];
+
+        if ($page->image_url) {
+            $schema['image'] = CanonicalUrl::absoluteAsset($page->image_url);
+        }
+
+        if ($page->created_at) {
+            $schema['datePublished'] = $page->created_at->toAtomString();
+        }
+
+        if ($page->updated_at) {
+            $schema['dateModified'] = $page->updated_at->toAtomString();
+        }
+
+        return $schema;
     }
 
     /**
@@ -90,7 +168,7 @@ class StructuredData
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
-            'name' => config('business.name', config('app.name', 'Mikrotik Kenya')),
+            'name' => config('business.name', config('app.name', 'Ubiquiti Kenya')),
             'url' => CanonicalUrl::normalize('/'),
         ];
         if (config('business.legal_name')) {
@@ -130,7 +208,7 @@ class StructuredData
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
-            'name' => config('app.name', 'Mikrotik Kenya'),
+            'name' => config('app.name', 'Ubiquiti Kenya'),
             'url' => CanonicalUrl::normalize('/'),
         ];
 

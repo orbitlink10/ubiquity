@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Schema;
 
@@ -17,6 +18,8 @@ class Product extends Model
         'vendor_id',
         'category_id',
         'name',
+        'h1',
+        'focus_keyword',
         'slug',
         'description',
         'meta_description',
@@ -71,8 +74,15 @@ class Product extends Model
 
         return Schema::hasTable($table)
             && Schema::hasColumn($table, 'seo_title')
+            && Schema::hasColumn($table, 'h1')
+            && Schema::hasColumn($table, 'focus_keyword')
             && Schema::hasColumn($table, 'model_number')
             && Schema::hasColumn($table, 'faq_items');
+    }
+
+    public static function categoryAssignmentsReady(): bool
+    {
+        return Schema::hasTable('category_product');
     }
 
     public static function officialMediaFieldsReady(): bool
@@ -93,6 +103,11 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class)->withTimestamps();
     }
 
     public function images(): HasMany
