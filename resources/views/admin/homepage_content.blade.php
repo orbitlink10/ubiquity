@@ -331,7 +331,7 @@
                                         type="text"
                                         name="nav_menu_items[{{ $index }}][url]"
                                         value="{{ $item['url'] ?? '' }}"
-                                        placeholder="/category/mikrotik-router-prices-in-kenya"
+                                        placeholder="/category/ubiquiti-routers"
                                         @disabled(! $homepageContentStorageReady)
                                     >
                                 </div>

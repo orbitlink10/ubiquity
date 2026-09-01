@@ -301,7 +301,7 @@ class UbiquitiSeoCatalog
     public static function categoryTitles(): array
     {
         return collect(self::primaryCategories())
-            ->mapWithKeys(fn (array $category, string $slug): array => [$slug => $category['h1'].' | Ubiquiti Kenya'])
+            ->mapWithKeys(fn (array $category, string $slug): array => [$slug => $category['h1'].' | Ubiquiti UniFi Kenya'])
             ->all();
     }
 

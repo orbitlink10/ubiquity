@@ -3,8 +3,8 @@
 use App\Models\Category;
 use App\Models\Page;
 use App\Models\Product;
-use App\Support\MikrotikSeoCatalog;
 use App\Support\SeoMetadata;
+use App\Support\UbiquitiSeoCatalog;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -13,12 +13,12 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('seo:consolidate-mikrotik-categories {--apply : Persist category consolidation changes}', function (): int {
+Artisan::command('seo:consolidate-ubiquiti-categories {--apply : Persist category consolidation changes}', function (): int {
     $apply = (bool) $this->option('apply');
-    $this->info($apply ? 'Applying MikroTik category consolidation.' : 'Dry run only. Re-run with --apply to persist changes.');
+    $this->info($apply ? 'Applying Ubiquiti category consolidation.' : 'Dry run only. Re-run with --apply to persist changes.');
 
     $work = function () use ($apply): void {
-        foreach (MikrotikSeoCatalog::primaryCategories() as $slug => $categoryData) {
+        foreach (UbiquitiSeoCatalog::primaryCategories() as $slug => $categoryData) {
             $category = Category::query()->where('slug', $slug)->first();
 
             if (! $category && $apply) {
@@ -33,7 +33,7 @@ Artisan::command('seo:consolidate-mikrotik-categories {--apply : Persist categor
             $this->line(($category ? 'Found' : 'Would create').' primary category: '.$slug);
         }
 
-        foreach (MikrotikSeoCatalog::legacyCategoryRedirects() as $legacySlug => $targetSlug) {
+        foreach (UbiquitiSeoCatalog::legacyCategoryRedirects() as $legacySlug => $targetSlug) {
             $source = Category::query()->where('slug', $legacySlug)->first();
             $target = Category::query()->where('slug', $targetSlug)->first();
 
@@ -65,10 +65,10 @@ Artisan::command('seo:consolidate-mikrotik-categories {--apply : Persist categor
 
         Product::query()
             ->with('category')
-            ->whereHas('category', fn ($query) => $query->whereIn('slug', ['mikrotik', 'mikrotik-products', 'mikrotik-products-in-kenya']))
+            ->whereHas('category', fn ($query) => $query->whereIn('slug', ['ubiquiti', 'ubiquiti-products', 'ubiquiti-products-in-kenya', 'ubiquity', 'ubiquity-products']))
             ->chunkById(100, function ($products) use ($apply): void {
                 foreach ($products as $product) {
-                    $targetSlug = MikrotikSeoCatalog::productIntentSlug($product);
+                    $targetSlug = UbiquitiSeoCatalog::productIntentSlug($product);
                     if (! $targetSlug) {
                         $this->warn('Needs manual category review: '.$product->name);
 
@@ -94,7 +94,7 @@ Artisan::command('seo:consolidate-mikrotik-categories {--apply : Persist categor
     $this->info('Done.');
 
     return 0;
-})->purpose('Consolidate overlapping MikroTik category slugs into the primary SEO taxonomy');
+})->purpose('Consolidate overlapping Ubiquiti category slugs into the primary SEO taxonomy');
 
 Artisan::command('seo:audit', function (): int {
     $issues = [];
@@ -113,7 +113,7 @@ Artisan::command('seo:audit', function (): int {
 
     Category::query()->withCount('products')->chunkById(100, function ($categories) use (&$issues): void {
         foreach ($categories as $category) {
-            if ($category->products_count === 0 && ! MikrotikSeoCatalog::isBroadMikrotikCategory($category)) {
+            if ($category->products_count === 0 && ! UbiquitiSeoCatalog::isBroadUbiquitiCategory($category)) {
                 $issues[] = ['category', $category->slug, 'No directly assigned products'];
             }
 

@@ -24,7 +24,7 @@ class ProductSeo
             return 'MikroTik';
         }
 
-        return config('app.name', 'Ubiquiti Kenya');
+        return 'Ubiquiti';
     }
 
     public static function displayName(Product $product): string
@@ -106,8 +106,8 @@ class ProductSeo
             'Brand' => self::brand($product),
             'SKU' => (string) $product->sku,
             'Category' => $product->category?->name ?? 'Ubiquiti products',
-            'Current price' => $product->price !== null ? 'KSh '.number_format((float) $product->price, 2) : '',
-            'Availability' => $product->stock > 0 ? 'In stock' : 'Out of stock',
+            'Current price' => $product->price !== null ? ProductPricing::priceLabel($product) : '',
+            'Availability' => ProductPricing::availabilityLabel($product),
         ];
 
         foreach (self::linesFromColumn($product, 'technical_specifications') as $line) {
@@ -212,7 +212,7 @@ class ProductSeo
                 'question' => 'Is '.$displayName.' available in Kenya?',
                 'answer' => $product->stock > 0
                     ? $displayName.' is currently listed as available. Stock can change, so confirm availability before placing a large order.'
-                    : $displayName.' is currently listed as out of stock. Contact the seller to confirm the next availability date.',
+                    : $displayName.' needs current availability confirmation from the seller before ordering.',
             ],
             [
                 'question' => 'What is the current price of '.$displayName.'?',

@@ -116,7 +116,7 @@ class VendorController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'description' => ['nullable', 'string', 'max:5000'],
             'meta_description' => ['nullable', 'string', 'max:255'],
-            'price' => ['required', 'numeric', 'min:0.01'],
+            'price' => ['nullable', 'numeric', 'min:0.01'],
             'stock' => ['required', 'integer', 'min:0'],
             'image_url' => ['nullable', 'url', 'max:255'],
         ]);
@@ -133,7 +133,7 @@ class VendorController extends Controller
             'slug' => $this->uniqueSlug('products', $data['name']),
             'description' => ProductContent::sanitizeRichText($data['description'] ?? null),
             'meta_description' => ProductContent::sanitizeMetaDescription($data['meta_description'] ?? null),
-            'price' => $data['price'],
+            'price' => $data['price'] ?? null,
             'stock' => $data['stock'],
             'sku' => $sku,
             'status' => $vendor->is_approved ? 'active' : 'draft',

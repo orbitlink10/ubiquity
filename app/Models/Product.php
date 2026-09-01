@@ -53,6 +53,9 @@ class Product extends Model
         'official_gallery_images',
         'official_video_url',
         'official_media_synced_at',
+        'manufacturer_url',
+        'manufacturer_image_url',
+        'manufacturer_last_checked_at',
     ];
 
     protected $casts = [
@@ -61,6 +64,7 @@ class Product extends Model
         'faq_items' => 'array',
         'official_gallery_images' => 'array',
         'official_media_synced_at' => 'datetime',
+        'manufacturer_last_checked_at' => 'datetime',
     ];
 
     public function getRouteKeyName(): string
@@ -93,6 +97,16 @@ class Product extends Model
             && Schema::hasColumn($table, 'official_image_url')
             && Schema::hasColumn($table, 'official_gallery_images')
             && Schema::hasColumn($table, 'official_video_url');
+    }
+
+    public static function manufacturerSourceFieldsReady(): bool
+    {
+        $table = (new static)->getTable();
+
+        return Schema::hasTable($table)
+            && Schema::hasColumn($table, 'manufacturer_url')
+            && Schema::hasColumn($table, 'manufacturer_image_url')
+            && Schema::hasColumn($table, 'manufacturer_last_checked_at');
     }
 
     public function vendor(): BelongsTo

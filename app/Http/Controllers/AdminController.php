@@ -12,6 +12,7 @@ use App\Models\Testimonial;
 use App\Models\User;
 use App\Models\Vendor;
 use App\Support\ProductContent;
+use App\Support\ProductImageCatalog;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -210,6 +211,32 @@ class AdminController extends Controller
         return array_slice($normalized, 0, 12);
     }
 
+    private function trustedOfficialImageUrlRule(): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail): void {
+            if ($value === null || trim((string) $value) === '') {
+                return;
+            }
+
+            if (! ProductImageCatalog::isTrustedOfficialImageUrl((string) $value)) {
+                $fail('The '.$attribute.' field must be an HTTPS Ubiquiti-hosted image URL.');
+            }
+        };
+    }
+
+    private function trustedManufacturerUrlRule(): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail): void {
+            if ($value === null || trim((string) $value) === '') {
+                return;
+            }
+
+            if (! ProductImageCatalog::isTrustedManufacturerUrl((string) $value)) {
+                $fail('The '.$attribute.' field must be an HTTPS Ubiquiti manufacturer URL.');
+            }
+        };
+    }
+
     private function validateTestimonialData(Request $request): array
     {
         return $request->validate([
@@ -282,7 +309,7 @@ class AdminController extends Controller
             return null;
         }
 
-        $adminShopName = 'Mikrotik Kenya Store';
+        $adminShopName = 'Ubiquiti UniFi Kenya Store';
 
         $vendor = Vendor::query()->where('user_id', $user->id)->first();
         if ($vendor) {
@@ -295,7 +322,9 @@ class AdminController extends Controller
             $legacyOfficial = 'official';
             if (in_array(strtolower((string) $vendor->shop_name), [
                 'almar market '.$legacyOfficial.' store',
+                'ubiquiti kenya store',
                 'mikrotik kenya '.$legacyOfficial.' store',
+                'mikrotik kenya store',
             ], true)) {
                 $updates['shop_name'] = $adminShopName;
                 $updates['slug'] = $this->uniqueSlug('vendors', $adminShopName, $vendor->id);
@@ -1120,8 +1149,8 @@ class AdminController extends Controller
             'subcategory_id' => ['nullable', 'exists:categories,id'],
             'description' => ['nullable', 'string'],
             'meta_description' => ['nullable', 'string', 'max:255'],
-            'price' => ['required', 'numeric', 'min:0.01'],
-            'compare_at_price' => ['nullable', 'numeric', 'gte:price'],
+            'price' => ['nullable', 'numeric', 'min:0.01', 'required_with:compare_at_price'],
+            'compare_at_price' => ['nullable', 'numeric', 'min:0.01', 'gte:price'],
             'stock' => ['required', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ];
@@ -1147,8 +1176,15 @@ class AdminController extends Controller
 
         if (Product::officialMediaFieldsReady()) {
             $rules = array_merge($rules, [
-                'official_image_url' => ['nullable', 'url', 'max:500'],
+                'official_image_url' => ['nullable', 'url', 'max:500', $this->trustedOfficialImageUrlRule()],
                 'official_video_url' => ['nullable', 'url', 'max:500'],
+            ]);
+        }
+
+        if (Product::manufacturerSourceFieldsReady()) {
+            $rules = array_merge($rules, [
+                'manufacturer_url' => ['nullable', 'url', 'max:500', $this->trustedManufacturerUrlRule()],
+                'manufacturer_image_url' => ['nullable', 'url', 'max:500', $this->trustedOfficialImageUrlRule()],
             ]);
         }
 
@@ -1187,7 +1223,7 @@ class AdminController extends Controller
             'slug' => $this->uniqueSlug('products', $data['name']),
             'description' => ProductContent::sanitizeRichText($data['description'] ?? null),
             'meta_description' => ProductContent::sanitizeMetaDescription($data['meta_description'] ?? null),
-            'price' => $data['price'],
+            'price' => $data['price'] ?? null,
             'compare_at_price' => $data['compare_at_price'] ?? null,
             'stock' => $data['stock'],
             'sku' => $this->nextSku(),
@@ -1220,6 +1256,17 @@ class AdminController extends Controller
             ]);
         }
 
+        if (Product::manufacturerSourceFieldsReady()) {
+            $manufacturerUrl = $this->cleanOptionalText($data['manufacturer_url'] ?? null, 500);
+            $manufacturerImageUrl = $this->cleanOptionalText($data['manufacturer_image_url'] ?? null, 500);
+
+            $payload = array_merge($payload, [
+                'manufacturer_url' => $manufacturerUrl,
+                'manufacturer_image_url' => $manufacturerImageUrl,
+                'manufacturer_last_checked_at' => ($manufacturerUrl || $manufacturerImageUrl) ? now() : null,
+            ]);
+        }
+
         $product = Product::create($payload);
 
         $this->syncPrimaryProductImage($product, $request->file('image'));
@@ -1236,8 +1283,8 @@ class AdminController extends Controller
             'subcategory_id' => ['nullable', 'exists:categories,id'],
             'description' => ['nullable', 'string'],
             'meta_description' => ['nullable', 'string', 'max:255'],
-            'price' => ['required', 'numeric', 'min:0.01'],
-            'compare_at_price' => ['nullable', 'numeric', 'gte:price'],
+            'price' => ['nullable', 'numeric', 'min:0.01', 'required_with:compare_at_price'],
+            'compare_at_price' => ['nullable', 'numeric', 'min:0.01', 'gte:price'],
             'stock' => ['required', 'integer', 'min:0'],
             'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
         ];
@@ -1263,8 +1310,15 @@ class AdminController extends Controller
 
         if (Product::officialMediaFieldsReady()) {
             $rules = array_merge($rules, [
-                'official_image_url' => ['nullable', 'url', 'max:500'],
+                'official_image_url' => ['nullable', 'url', 'max:500', $this->trustedOfficialImageUrlRule()],
                 'official_video_url' => ['nullable', 'url', 'max:500'],
+            ]);
+        }
+
+        if (Product::manufacturerSourceFieldsReady()) {
+            $rules = array_merge($rules, [
+                'manufacturer_url' => ['nullable', 'url', 'max:500', $this->trustedManufacturerUrlRule()],
+                'manufacturer_image_url' => ['nullable', 'url', 'max:500', $this->trustedOfficialImageUrlRule()],
             ]);
         }
 
@@ -1297,7 +1351,7 @@ class AdminController extends Controller
             'slug' => $this->uniqueSlug('products', $data['name'], $product->id),
             'description' => ProductContent::sanitizeRichText($data['description'] ?? null),
             'meta_description' => ProductContent::sanitizeMetaDescription($data['meta_description'] ?? null),
-            'price' => $data['price'],
+            'price' => $data['price'] ?? null,
             'compare_at_price' => $data['compare_at_price'] ?? null,
             'stock' => $data['stock'],
         ];
@@ -1325,6 +1379,17 @@ class AdminController extends Controller
             $payload = array_merge($payload, [
                 'official_image_url' => $this->cleanOptionalText($data['official_image_url'] ?? null, 500),
                 'official_video_url' => $this->cleanOptionalText($data['official_video_url'] ?? null, 500),
+            ]);
+        }
+
+        if (Product::manufacturerSourceFieldsReady()) {
+            $manufacturerUrl = $this->cleanOptionalText($data['manufacturer_url'] ?? null, 500);
+            $manufacturerImageUrl = $this->cleanOptionalText($data['manufacturer_image_url'] ?? null, 500);
+
+            $payload = array_merge($payload, [
+                'manufacturer_url' => $manufacturerUrl,
+                'manufacturer_image_url' => $manufacturerImageUrl,
+                'manufacturer_last_checked_at' => ($manufacturerUrl || $manufacturerImageUrl) ? now() : null,
             ]);
         }
 

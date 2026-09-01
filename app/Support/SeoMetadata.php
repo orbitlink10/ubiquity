@@ -12,7 +12,7 @@ class SeoMetadata
 {
     public static function homepageTitle(int $page = 1): string
     {
-        $title = 'Ubiquiti Kenya | UniFi, airMAX & Networking Equipment';
+        $title = 'Ubiquiti UniFi Kenya | Access Points, Switches & Gateways';
 
         return $page > 1 ? $title.' - Page '.$page : $title;
     }
@@ -28,8 +28,8 @@ class SeoMetadata
         $mappedTitle = UbiquitiSeoCatalog::categoryTitles()[Str::slug($category->slug)] ?? null;
         $categoryTitle = $mappedTitle
             ?: (Str::contains(Str::lower($categoryName), ['kenya', 'price'])
-                ? $categoryName.' | Ubiquiti Kenya'
-                : $categoryName.' in Kenya | Ubiquiti Kenya');
+                ? $categoryName.' | Ubiquiti UniFi Kenya'
+                : $categoryName.' in Kenya | Ubiquiti UniFi Kenya');
 
         $title = self::columnValue($category, 'seo_title')
             ?: (UbiquitiSeoCatalog::isRouterAuthorityCategory($category)
@@ -55,7 +55,7 @@ class SeoMetadata
             return $customTitle;
         }
 
-        return Str::limit(ProductSeo::displayName($product).' Price in Kenya | Ubiquiti Kenya', 78, '');
+        return Str::limit(ProductSeo::displayName($product).' Price in Kenya | Ubiquiti UniFi Kenya', 78, '');
     }
 
     public static function productDescription(Product $product): string

@@ -24,7 +24,7 @@
         </label>
         <label>
             Price
-            <input type="number" name="price" min="0.01" step="0.01" value="{{ old('price') }}" required>
+            <input type="number" name="price" min="0.01" step="0.01" value="{{ old('price') }}" placeholder="Leave blank to show contact for price">
         </label>
         <label>
             Stock

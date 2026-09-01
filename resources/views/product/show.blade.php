@@ -34,14 +34,17 @@
     $imageErrorFallback = $primaryImage !== $uploadedProductImage && $uploadedProductImage
         ? $uploadedProductImage
         : ($primaryImage !== $officialProductImage && $officialProductImage ? $officialProductImage : $productImageFallback);
-    $currentPrice = (float) $product->price;
+    $hasPublishedPrice = \App\Support\ProductPricing::hasPublishedPrice($product);
+    $productCanPurchase = \App\Support\ProductPricing::canPurchase($product);
+    $currentPrice = $hasPublishedPrice ? (float) $product->price : null;
     $compareAtPrice = (float) ($product->compare_at_price ?? 0);
-    $hasDiscount = $compareAtPrice > $currentPrice && $compareAtPrice > 0;
+    $hasDiscount = $currentPrice !== null && $compareAtPrice > $currentPrice && $compareAtPrice > 0;
     $discountPercent = $hasDiscount
         ? (int) round((($compareAtPrice - $currentPrice) / $compareAtPrice) * 100)
         : null;
-    $availabilityLabel = $product->stock > 0 ? 'IN STOCK' : 'OUT OF STOCK';
+    $availabilityLabel = \App\Support\ProductPricing::availabilityLabel($product, true);
     $availabilityClass = $product->stock > 0 ? 'is-available' : 'is-unavailable';
+    $disabledPurchaseLabel = $hasPublishedPrice ? 'Contact for Availability' : 'Contact for Price';
     $productSeoTitle = \App\Support\SeoMetadata::productTitle($product);
     $productMetaDescription = \App\Support\SeoMetadata::productDescription($product);
     $productDisplayName = \App\Support\ProductSeo::displayName($product);
@@ -125,7 +128,7 @@
             <div class="product-gallery-stage">
                 <img
                     src="{{ $primaryImage }}"
-                    alt="{{ $productBrand === 'MikroTik' ? 'MikroTik ' . $productModel : $productDisplayName }}"
+                    alt="{{ $productDisplayName }}"
                     class="product-gallery-main-image"
                     data-product-main-image
                     width="900"
@@ -148,7 +151,7 @@
                         >
                             <img
                                 src="{{ $galleryImage }}"
-                                alt="{{ $productBrand === 'MikroTik' ? 'MikroTik ' . $productModel : $productDisplayName }} thumbnail {{ $index + 1 }}"
+                                alt="{{ $productDisplayName }} thumbnail {{ $index + 1 }}"
                                 width="120"
                                 height="90"
                                 loading="lazy"
@@ -182,7 +185,7 @@
             </div>
 
             <div class="product-price-row">
-                <span class="product-current-price">KSh {{ number_format($currentPrice, 2) }}</span>
+                <span class="product-current-price">{{ \App\Support\ProductPricing::priceLabel($product) }}</span>
                 @if($hasDiscount)
                     <span class="product-compare-price">KSh {{ number_format($compareAtPrice, 2) }}</span>
                     <span class="product-discount-pill">{{ $discountPercent }}% OFF</span>
@@ -202,7 +205,7 @@
             <div class="product-summary-divider" aria-hidden="true"></div>
 
             <div class="product-purchase-card">
-                @if($product->stock > 0)
+                @if($productCanPurchase)
                     @auth
                         <form class="product-purchase-form" method="post" action="{{ route('cart.add', $product) }}">
                             @csrf
@@ -241,7 +244,7 @@
                     @endauth
                 @else
                     <div class="product-cta-row">
-                        <button type="button" class="product-primary-cta" disabled>Out of Stock</button>
+                        <button type="button" class="product-primary-cta" disabled>{{ $disabledPurchaseLabel }}</button>
                         @if($whatsAppUrl)
                             <a class="product-whatsapp-cta" href="{{ $whatsAppUrl }}" target="_blank" rel="noopener noreferrer">Ask on WhatsApp</a>
                         @endif
@@ -254,7 +257,7 @@
             <div class="product-availability-row">
                 <span class="product-availability-label">Availability:</span>
                 <span class="product-availability-pill {{ $availabilityClass }}">
-                    {{ $product->stock > 0 ? 'AVAILABLE IN STORE' : 'OUT OF STOCK' }}
+                    {{ \App\Support\ProductPricing::availabilityLabel($product, true) }}
                 </span>
             </div>
         </div>
@@ -272,7 +275,7 @@
 
         @if($chooseAnotherModel)
             <article class="product-info-panel">
-                <h2>When should you choose another MikroTik model?</h2>
+                <h2>When should you choose another {{ $productBrand }} model?</h2>
                 <p>{{ $chooseAnotherModel }}</p>
             </article>
         @endif
@@ -352,7 +355,7 @@
                     <div class="product-video-frame">
                         <iframe
                             src="{{ $productVideoEmbedUrl }}"
-                            title="MikroTik {{ $productModel }} video"
+                            title="{{ $productDisplayName }} video"
                             loading="lazy"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen
@@ -383,7 +386,7 @@
                 </div>
                 <div class="product-info-item">
                     <span>Price</span>
-                    <strong>KSh {{ number_format($currentPrice, 2) }}</strong>
+                    <strong>{{ \App\Support\ProductPricing::priceLabel($product) }}</strong>
                 </div>
                 @if($hasDiscount)
                     <div class="product-info-item">
@@ -393,8 +396,14 @@
                 @endif
                 <div class="product-info-item">
                     <span>Stock</span>
-                    <strong>{{ $product->stock > 0 ? 'Available in store' : 'Out of stock' }}</strong>
+                    <strong>{{ \App\Support\ProductPricing::availabilityLabel($product) }}</strong>
                 </div>
+                @if(\App\Models\Product::manufacturerSourceFieldsReady() && $product->manufacturer_url)
+                    <div class="product-info-item">
+                        <span>Manufacturer source</span>
+                        <strong><a href="{{ $product->manufacturer_url }}" target="_blank" rel="noopener noreferrer">View Ubiquiti page</a></strong>
+                    </div>
+                @endif
                 <div class="product-info-item">
                     <span>Vendor</span>
                     <strong>{{ $product->vendor->shop_name }}</strong>
@@ -431,7 +440,7 @@
     @if(!empty($comparisonLinks))
         <section class="product-tabs-shell product-link-panel">
             <h2>Useful comparisons</h2>
-            <nav class="category-hub-links" aria-label="MikroTik product comparisons">
+            <nav class="category-hub-links" aria-label="Ubiquiti product comparisons">
                 @foreach($comparisonLinks as $comparisonLink)
                     <a href="{{ $comparisonLink['url'] }}">{{ $comparisonLink['label'] }}</a>
                 @endforeach
@@ -441,8 +450,8 @@
 
     @if($relatedCategories->isNotEmpty())
         <section class="product-tabs-shell product-link-panel">
-            <h2>Related MikroTik categories</h2>
-            <nav class="category-hub-links" aria-label="Related MikroTik categories">
+            <h2>Related Ubiquiti categories</h2>
+            <nav class="category-hub-links" aria-label="Related Ubiquiti categories">
                 @foreach($relatedCategories as $relatedCategory)
                     <a href="{{ route('category.show', $relatedCategory) }}">{{ $relatedCategory->name }}</a>
                 @endforeach
@@ -461,9 +470,9 @@
         </section>
     @endif
 
-    @if($product->stock > 0)
+    @if($productCanPurchase)
         <div class="product-sticky-bar" data-product-sticky-bar>
-            <span class="product-sticky-price">KSh {{ number_format($currentPrice, 2) }}</span>
+            <span class="product-sticky-price">{{ \App\Support\ProductPricing::priceLabel($product) }}</span>
             @auth
                 <form class="product-sticky-form" method="post" action="{{ route('cart.add', $product) }}">
                     @csrf

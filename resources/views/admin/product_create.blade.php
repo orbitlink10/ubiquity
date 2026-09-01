@@ -67,6 +67,7 @@
     $primaryImage = $productToEdit?->images?->firstWhere('is_primary', true) ?? $productToEdit?->images?->first();
     $productSeoFieldsReady = \App\Models\Product::seoFieldsReady();
     $productOfficialMediaFieldsReady = \App\Models\Product::officialMediaFieldsReady();
+    $productManufacturerSourceFieldsReady = \App\Models\Product::manufacturerSourceFieldsReady();
     $productFaqItems = old('faq_items', $productToEdit?->faq_items ?? [
         ['question' => '', 'answer' => ''],
         ['question' => '', 'answer' => ''],
@@ -105,7 +106,7 @@
                 </div>
 
                 <div class="admin-product-field">
-                    <label class="admin-product-label" for="price">Price (KES)</label>
+                    <label class="admin-product-label" for="price">Price (KES, optional)</label>
                     <input
                         class="admin-product-input"
                         id="price"
@@ -114,8 +115,7 @@
                         min="0.01"
                         step="0.01"
                         value="{{ old('price', $productToEdit?->price) }}"
-                        placeholder="Enter product price"
-                        required
+                        placeholder="Leave blank to show contact for price"
                     >
                 </div>
 
@@ -367,11 +367,19 @@
 
                             @if($productOfficialMediaFieldsReady)
                                 <label class="admin-product-label" for="official_image_url">Official product image URL</label>
-                                <input class="admin-product-input" id="official_image_url" type="url" name="official_image_url" value="{{ old('official_image_url', $productToEdit?->official_image_url) }}" placeholder="https://cdn.mikrotik.com/web-assets/rb_images/...">
+                                <input class="admin-product-input" id="official_image_url" type="url" name="official_image_url" value="{{ old('official_image_url', $productToEdit?->official_image_url) }}" placeholder="https://assets.ecomm.ui.com/...">
 
                                 <label class="admin-product-label" for="official_video_url">Product video URL (YouTube)</label>
                                 <input class="admin-product-input" id="official_video_url" type="url" name="official_video_url" value="{{ old('official_video_url', $productToEdit?->official_video_url) }}" placeholder="https://www.youtube.com/watch?v=...">
-                                <p class="admin-product-note">Leave empty to auto-sync official images, gallery and video from mikrotik.com using <code>php artisan mikrotik:sync-media</code>.</p>
+                                <p class="admin-product-note">Use HTTPS Ubiquiti-hosted image URLs when adding official product media manually.</p>
+                            @endif
+
+                            @if($productManufacturerSourceFieldsReady)
+                                <label class="admin-product-label" for="manufacturer_url">Manufacturer product URL</label>
+                                <input class="admin-product-input" id="manufacturer_url" type="url" name="manufacturer_url" value="{{ old('manufacturer_url', $productToEdit?->manufacturer_url) }}" placeholder="https://store.ui.com/...">
+
+                                <label class="admin-product-label" for="manufacturer_image_url">Manufacturer image URL</label>
+                                <input class="admin-product-input" id="manufacturer_image_url" type="url" name="manufacturer_image_url" value="{{ old('manufacturer_image_url', $productToEdit?->manufacturer_image_url) }}" placeholder="https://assets.ecomm.ui.com/...">
                             @endif
 
                             <div class="admin-form-grid">
@@ -381,7 +389,7 @@
                                 </div>
                                 <div>
                                     <label class="admin-product-label" for="brand">Brand</label>
-                                    <input class="admin-product-input" id="brand" type="text" name="brand" value="{{ old('brand', $productToEdit?->brand) }}" placeholder="MikroTik">
+                                    <input class="admin-product-input" id="brand" type="text" name="brand" value="{{ old('brand', $productToEdit?->brand) }}" placeholder="Ubiquiti UniFi">
                                 </div>
                             </div>
 
@@ -444,7 +452,7 @@
                 </details>
 
                 <div class="admin-product-actions">
-                    <p>Marked price is optional. If provided, it must be greater than or equal to the actual selling price.</p>
+                    <p>Leave price empty to show contact for price. Marked price is optional and must be greater than or equal to the selling price.</p>
                     <button type="submit" class="admin-primary-pill">{{ $isEditingProduct ? 'Update Product' : 'Save Product' }}</button>
                 </div>
             </form>

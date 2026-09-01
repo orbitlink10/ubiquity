@@ -9,10 +9,10 @@
     $productImageFallback = \App\Support\ProductImageCatalog::placeholderUrl();
 @endphp
 
-@section('title', $title . ' | Ubiquiti Kenya')
+@section('title', $title . ' | Ubiquiti UniFi Kenya')
 @section('meta_description', $description)
 @section('canonical_url', $canonicalUrl)
-@section('og_title', $title . ' | Ubiquiti Kenya')
+@section('og_title', $title . ' | Ubiquiti UniFi Kenya')
 @section('og_description', $description)
 
 @push('head')

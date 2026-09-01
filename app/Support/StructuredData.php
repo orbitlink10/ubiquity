@@ -28,12 +28,12 @@ class StructuredData
                 'url' => $canonicalUrl,
                 'priceCurrency' => 'KES',
                 'price' => number_format((float) $product->price, 2, '.', ''),
-                'availability' => $product->stock > 0
+                'availability' => ProductPricing::canPurchase($product)
                     ? 'https://schema.org/InStock'
-                    : 'https://schema.org/OutOfStock',
+                    : 'https://schema.org/LimitedAvailability',
                 'seller' => [
                     '@type' => 'Organization',
-                    'name' => config('business.name', config('app.name', 'Ubiquiti Kenya')),
+                    'name' => config('business.name', config('app.name', 'Ubiquiti UniFi Kenya')),
                 ],
             ],
         ];
@@ -168,7 +168,7 @@ class StructuredData
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
-            'name' => config('business.name', config('app.name', 'Ubiquiti Kenya')),
+            'name' => config('business.name', config('app.name', 'Ubiquiti UniFi Kenya')),
             'url' => CanonicalUrl::normalize('/'),
         ];
         if (config('business.legal_name')) {
@@ -208,7 +208,7 @@ class StructuredData
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
-            'name' => config('app.name', 'Ubiquiti Kenya'),
+            'name' => config('app.name', 'Ubiquiti UniFi Kenya'),
             'url' => CanonicalUrl::normalize('/'),
         ];
 

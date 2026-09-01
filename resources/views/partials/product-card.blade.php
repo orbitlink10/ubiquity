@@ -36,7 +36,7 @@
         </h3>
         <p class="product-desc">{{ $productDescription }}</p>
         <div class="product-bottom">
-            <span class="price">KES {{ number_format((float) $product->price, 2) }}</span>
+            <span class="price">{{ \App\Support\ProductPricing::priceLabel($product, 'KES') }}</span>
             <a class="view-btn" href="{{ route('product.show', $product) }}">View</a>
         </div>
     </div>

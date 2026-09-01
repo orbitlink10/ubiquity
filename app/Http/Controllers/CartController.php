@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\VendorOrder;
+use App\Support\ProductPricing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +62,10 @@ class CartController extends Controller
     {
         if ($product->status !== 'active' || !$product->vendor || !$product->vendor->is_approved) {
             return back()->with('error', 'This product is not available.');
+        }
+
+        if (! ProductPricing::canPurchase($product)) {
+            return back()->with('error', 'Contact the seller to confirm current price and availability.');
         }
 
         $validated = $request->validate([
@@ -126,6 +131,12 @@ class CartController extends Controller
             return back()->with('error', 'Product no longer exists and was removed from cart.');
         }
 
+        if (! ProductPricing::canPurchase($product)) {
+            $cartItem->delete();
+
+            return back()->with('error', 'This product needs current price or availability confirmation and was removed from cart.');
+        }
+
         $cartItem->update([
             'quantity' => min($quantity, $product->stock),
             'unit_price' => $product->price,
@@ -176,6 +187,7 @@ class CartController extends Controller
             $orderNumber = DB::transaction(function () use ($cart, $user, $data): string {
                 $productIds = $cart->items->pluck('product_id')->all();
                 $products = Product::query()
+                    ->with('vendor')
                     ->whereIn('id', $productIds)
                     ->lockForUpdate()
                     ->get()
@@ -188,8 +200,12 @@ class CartController extends Controller
                     /** @var Product|null $product */
                     $product = $products->get($item->product_id);
 
-                    if (!$product || $product->status !== 'active') {
+                    if (!$product || $product->status !== 'active' || ! $product->vendor || ! $product->vendor->is_approved) {
                         throw new \RuntimeException('Some products in your cart are no longer available.');
+                    }
+
+                    if (! ProductPricing::canPurchase($product)) {
+                        throw new \RuntimeException('Some products need current price or availability confirmation before checkout.');
                     }
 
                     if ($item->quantity > $product->stock) {

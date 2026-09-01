@@ -199,6 +199,26 @@ class ProductImageCatalog
         'r11e-5hnd' => 'https://cdn.mikrotik.com/web-assets/rb_images/815_lg.webp',
     ];
 
+    /**
+     * @var array<int, string>
+     */
+    private const TRUSTED_OFFICIAL_IMAGE_HOSTS = [
+        'assets.ecomm.ui.com',
+        'cdn.ecomm.ui.com',
+        'images.svc.ui.com',
+    ];
+
+    /**
+     * @var array<int, string>
+     */
+    private const TRUSTED_MANUFACTURER_HOSTS = [
+        'help.ui.com',
+        'store.ui.com',
+        'techspecs.ui.com',
+        'ui.com',
+        'www.ui.com',
+    ];
+
     public static function officialUrlFor(?string $productName): ?string
     {
         $key = self::normalizeName($productName);
@@ -214,8 +234,8 @@ class ProductImageCatalog
     }
 
     /**
-     * Official gallery images for a product, preferring synced MikroTik media
-     * and falling back to the built-in image map.
+     * Official gallery images for a product, preferring trusted Ubiquiti media
+     * and falling back to the legacy built-in image map.
      *
      * @return array<int, string>
      */
@@ -224,7 +244,7 @@ class ProductImageCatalog
         if (is_array($product->official_gallery_images) && $product->official_gallery_images !== []) {
             $urls = array_values(array_unique(array_filter(
                 array_map('strval', $product->official_gallery_images),
-                fn (string $url): bool => $url !== ''
+                fn (string $url): bool => self::isTrustedOfficialImageUrl($url)
             )));
 
             if ($urls !== []) {
@@ -232,8 +252,10 @@ class ProductImageCatalog
             }
         }
 
-        if ($single = trim((string) $product->official_image_url)) {
-            return [$single];
+        foreach (['official_image_url', 'manufacturer_image_url'] as $field) {
+            if (($single = trim((string) ($product->{$field} ?? ''))) && self::isTrustedOfficialImageUrl($single)) {
+                return [$single];
+            }
         }
 
         if ($static = self::officialUrlFor($product->name)) {
@@ -275,6 +297,58 @@ class ProductImageCatalog
         $path = str_replace('\\', '/', $path);
 
         return rtrim(request()->getBaseUrl(), '/') . '/' . ltrim($path, '/');
+    }
+
+    public static function isTrustedOfficialImageUrl(?string $url): bool
+    {
+        $parts = self::httpsUrlParts($url);
+        if ($parts === null) {
+            return false;
+        }
+
+        return in_array($parts['host'], self::TRUSTED_OFFICIAL_IMAGE_HOSTS, true);
+    }
+
+    public static function isTrustedManufacturerUrl(?string $url): bool
+    {
+        $parts = self::httpsUrlParts($url);
+        if ($parts === null) {
+            return false;
+        }
+
+        if (in_array($parts['host'], self::TRUSTED_MANUFACTURER_HOSTS, true)) {
+            return true;
+        }
+
+        return str_ends_with($parts['host'], '.store.ui.com');
+    }
+
+    /**
+     * @return array{scheme: string, host: string}|null
+     */
+    private static function httpsUrlParts(?string $url): ?array
+    {
+        $url = trim((string) $url);
+        if ($url === '') {
+            return null;
+        }
+
+        $parts = parse_url($url);
+        if (! is_array($parts)) {
+            return null;
+        }
+
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        $host = strtolower((string) ($parts['host'] ?? ''));
+
+        if ($scheme !== 'https' || $host === '') {
+            return null;
+        }
+
+        return [
+            'scheme' => $scheme,
+            'host' => $host,
+        ];
     }
 
     private static function normalizeName(?string $productName): string

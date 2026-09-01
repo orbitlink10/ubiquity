@@ -109,22 +109,22 @@ class HomepageContent extends Model
             'contact_phone' => config('business.phone'),
             'contact_whatsapp' => config('business.whatsapp', config('business.phone')),
             'contact_email' => config('business.email'),
-            'hero_title' => 'MikroTik Kenya – Routers, Switches & Networking Equipment',
-            'hero_description' => 'Compare genuine MikroTik routers, switches, access points and wireless systems, with current prices, specifications, stock availability and fast delivery across Kenya.',
-            'why_choose_title' => 'Why Buy MikroTik Equipment From Us?',
-            'why_choose_intro' => 'Compare practical RouterOS hardware for homes, offices, ISPs and enterprise networks from a catalogue built around Kenyan networking needs.',
+            'hero_title' => 'Ubiquiti UniFi Kenya - Access Points, Switches & Gateways',
+            'hero_description' => 'Compare genuine Ubiquiti UniFi access points, switches, gateways, cameras and wireless systems with current prices, specifications, stock availability and fast delivery across Kenya.',
+            'why_choose_title' => 'Why Buy Ubiquiti UniFi Equipment From Us?',
+            'why_choose_intro' => 'Compare practical UniFi, UISP, airMAX and airFiber hardware for homes, offices, ISPs and enterprise networks from a catalogue built around Kenyan networking needs.',
             'why_choose_items' => self::defaultWhyChooseItems(),
             'testimonials_badge' => 'Testimonials',
             'testimonials_title' => 'Customer Feedback',
             'testimonials_intro' => 'Feedback from customers can be managed from the admin panel when genuine testimonials are available.',
             'testimonial_items' => self::defaultTestimonialItems(),
             'faq_badge' => 'FAQ',
-            'faq_title' => 'MikroTik Buying Questions',
-            'faq_intro' => 'Answers to common questions about MikroTik prices, stock, delivery and product selection in Kenya.',
+            'faq_title' => 'Ubiquiti UniFi Buying Questions',
+            'faq_intro' => 'Answers to common questions about Ubiquiti UniFi prices, stock, delivery and product selection in Kenya.',
             'faq_items' => self::defaultFaqItems(),
-            'content_badge' => 'MikroTik Kenya Guide',
-            'content_title' => 'MikroTik Kenya: RouterOS Hardware for Homes, Offices and ISPs',
-            'content_intro' => 'Explore MikroTik products for routing, switching, wireless access, LTE backup and network management.',
+            'content_badge' => 'Ubiquiti UniFi Kenya Guide',
+            'content_title' => 'Ubiquiti UniFi Kenya: Networking Hardware for Homes, Offices and ISPs',
+            'content_intro' => 'Explore Ubiquiti UniFi products for WiFi, switching, gateways, cameras, wireless links and network management.',
             'content_body' => self::defaultContentBody(),
             'nav_menu_items' => [],
         ]);
@@ -447,11 +447,11 @@ class HomepageContent extends Model
     {
         return [
             ['title' => 'Current Catalogue Prices', 'description' => 'Product pages show prices from the store catalogue instead of static SEO copy.'],
-            ['title' => 'RouterOS-Focused Selection', 'description' => 'Browse routers, switches, wireless systems, LTE devices and accessories by practical network use.'],
+            ['title' => 'UniFi-Focused Selection', 'description' => 'Browse access points, switches, gateways, cameras, wireless systems and accessories by practical network use.'],
             ['title' => 'Product-Level Details', 'description' => 'Review SKU, stock status, category, use cases and technical guidance before purchase.'],
             ['title' => 'Quotation Friendly', 'description' => 'Business buyers can use product pages as a starting point for larger networking enquiries.'],
             ['title' => 'Delivery Information', 'description' => 'Delivery options are confirmed during checkout or enquiry based on product availability and destination.'],
-            ['title' => 'Configuration Guidance', 'description' => 'Product pages include RouterOS and compatibility notes where available.'],
+            ['title' => 'Configuration Guidance', 'description' => 'Product pages include UniFi, UISP and compatibility notes where available.'],
         ];
     }
 
@@ -490,7 +490,7 @@ class HomepageContent extends Model
                 'answer' => 'Product prices are generated from the store catalogue and should update when the admin changes a product price.',
             ],
             [
-                'question' => 'Can I compare MikroTik routers before buying?',
+                'question' => 'Can I compare Ubiquiti UniFi products before buying?',
                 'answer' => 'Use category pages and product pages to compare price, stock status, SKU, category and recommended applications.',
             ],
             [
@@ -507,17 +507,17 @@ class HomepageContent extends Model
     private static function defaultContentBody(): string
     {
         return implode('', [
-            '<h2>MikroTik networking equipment in Kenya</h2>',
-            '<p>MikroTik routers, switches and wireless systems are used for home internet, office networks, ISP deployments, hotspot management, VPNs, firewalling and fibre uplinks.</p>',
-            '<p>Use the catalogue to compare current prices, stock status, SKUs and product categories before choosing a RouterOS device.</p>',
-            '<h3>Where MikroTik fits best</h3>',
+            '<h2>Ubiquiti UniFi networking equipment in Kenya</h2>',
+            '<p>Ubiquiti UniFi access points, switches, gateways, cameras and wireless systems are used for home internet, office networks, ISP deployments, CCTV, VPNs and fibre uplinks.</p>',
+            '<p>Use the catalogue to compare current prices, stock status, SKUs and product categories before choosing a UniFi, UISP, airMAX or airFiber device.</p>',
+            '<h3>Where Ubiquiti UniFi fits best</h3>',
             '<ul>',
             '<li>Homes and small offices that need reliable routing and Wi-Fi management.</li>',
-            '<li>Businesses that need firewall, VPN, VLAN and multi-WAN RouterOS features.</li>',
+            '<li>Businesses that need firewall, VPN, VLAN, PoE switching and multi-WAN UniFi features.</li>',
             '<li>ISPs and installers building outdoor wireless, fibre and aggregation networks.</li>',
             '</ul>',
             '<h3>What to Consider Before Buying</h3>',
-            '<p>Check the number of Ethernet ports, throughput requirements, PoE support, SFP or SFP+ uplinks, wireless bands, LTE or 5G needs, mounting options and RouterOS feature requirements.</p>',
+            '<p>Check the number of Ethernet ports, throughput requirements, PoE support, SFP or SFP+ uplinks, wireless bands, camera needs, mounting options and UniFi management requirements.</p>',
             '<p>For larger networks, confirm compatibility with your switches, access points, power setup and internet handoff before purchase.</p>',
         ]);
     }

@@ -657,12 +657,12 @@ class StorefrontController extends Controller
         $trustPages = [
             'about-us' => [
                 'title' => 'About Us',
-                'heading' => 'About Ubiquiti Kenya',
-                'summary' => 'Information about the business behind this Ubiquiti product website can be added from the admin content area.',
+                'heading' => 'About Ubiquiti UniFi Kenya',
+                'summary' => 'Information about the business behind this Ubiquiti UniFi product website can be added from the admin content area.',
             ],
             'contact-us' => [
                 'title' => 'Contact Us',
-                'heading' => 'Contact Ubiquiti Kenya',
+                'heading' => 'Contact Ubiquiti UniFi Kenya',
                 'summary' => 'Use the available contact details below to enquire about products, quotations, delivery and support.',
             ],
             'delivery-policy' => [
