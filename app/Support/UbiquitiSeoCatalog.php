@@ -31,7 +31,7 @@ class UbiquitiSeoCatalog
                 ],
             ],
             'ubiquiti-switches' => [
-                'name' => 'Ubiquiti Switches',
+                'name' => 'Ubiquiti UniFi Switches',
                 'h1' => 'Ubiquiti Switches in Kenya',
                 'focus_keyword' => 'Ubiquiti Switches Kenya',
                 'meta_description' => 'Shop Ubiquiti UniFi switches in Kenya including PoE, non-PoE, 8-port, 16-port, 24-port, 48-port, 2.5G and 10G switches.',
@@ -181,6 +181,16 @@ class UbiquitiSeoCatalog
                 'intro' => 'Find Ubiquiti accessories for powering, mounting, cabling, protecting and expanding network deployments.',
                 'description' => '<p>Ubiquiti accessories support installation, power, fiber, rack and cabling needs.</p>',
                 'seo_content' => '<h2>Ubiquiti accessories for installations</h2><p>Use accessories to complete network deployments with correct power, mounting, fiber, surge protection and cabling components.</p>',
+                'faq_items' => [],
+            ],
+            'ubiquiti-network-accessories' => [
+                'name' => 'Ubiquiti Network Accessories',
+                'h1' => 'Ubiquiti Network Accessories in Kenya',
+                'focus_keyword' => 'Ubiquiti Network Accessories Kenya',
+                'meta_description' => 'Shop Ubiquiti network accessories in Kenya including PoE injectors, SFP modules, DAC cables, surge protectors, mounts and power supplies.',
+                'intro' => 'Find Ubiquiti network accessories for powering, mounting, cabling, protecting and expanding network deployments.',
+                'description' => '<p>Ubiquiti network accessories support PoE, fiber, rack, mounting and cabling needs.</p>',
+                'seo_content' => '<h2>Ubiquiti network accessories for installations</h2><p>Use network accessories to complete deployments with correct power, mounting, fiber, surge protection and cabling components.</p>',
                 'faq_items' => [],
             ],
             'ubiquiti-fiber' => [
