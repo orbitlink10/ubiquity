@@ -156,4 +156,34 @@ class UbiquitiNetworkingCatalog
 
         return file_exists($path) ? require $path : [];
     }
+
+    /**
+     * Kenyan retail prices (KES) sourced from ctcsolutions.co.ke, keyed by
+     * product slug. Only products with a confirmed match are listed; the
+     * importer leaves price NULL for everything else.
+     *
+     * @return array<string, float>
+     */
+    public static function kenyanPrices(): array
+    {
+        return [
+            'ubiquiti-u7-lite' => 17500.00,
+            'ubiquiti-u7-long-range' => 25000.00,
+            'ubiquiti-u7-pro' => 28500.00,
+            'ubiquiti-u7-pro-max' => 42000.00,
+            'ubiquiti-u7-pro-wall' => 33000.00,
+            'ubiquiti-u7-in-wall' => 22000.00,
+            'ubiquiti-u7-outdoor' => 38000.00,
+            'ubiquiti-u7-pro-outdoor' => 44500.00,
+            'ubiquiti-u6-plus' => 17000.00,
+            'ubiquiti-u6-pro' => 24000.00,
+            'ubiquiti-u6-enterprise' => 40000.00,
+            'ubiquiti-u6-in-wall' => 24000.00,
+            'ubiquiti-u6-mesh' => 25000.00,
+            'unifi-lite-16-poe' => 31000.00,
+            'unifi-standard-24-poe' => 65000.00,
+            'unifi-standard-48-poe' => 90000.00,
+            'ubiquiti-dream-machine-pro-max' => 87000.00,
+        ];
+    }
 }

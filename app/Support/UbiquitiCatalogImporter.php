@@ -94,7 +94,9 @@ class UbiquitiCatalogImporter
             }
             $categoryIds = $categoryIds->unique()->values()->all();
 
-            $attributes = $this->productAttributes($data, $primary);
+            $price = UbiquitiNetworkingCatalog::kenyanPrices()[$slug] ?? null;
+
+            $attributes = $this->productAttributes($data, $primary, $price);
 
             $existing = Product::where('slug', $slug)->first();
 
@@ -105,7 +107,7 @@ class UbiquitiCatalogImporter
             } else {
                 $attributes['vendor_id'] = $vendor->id;
                 $attributes['category_id'] = $primary->id;
-                $attributes['price'] = null;
+                $attributes['price'] = $price;
                 $attributes['compare_at_price'] = null;
                 $attributes['stock'] = 0;
                 $attributes['status'] = 'active';
@@ -135,7 +137,7 @@ class UbiquitiCatalogImporter
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    private function productAttributes(array $data, Category $primary): array
+    private function productAttributes(array $data, Category $primary, ?float $price): array
     {
         $attributes = [
             'name' => $data['name'],
@@ -156,6 +158,7 @@ class UbiquitiCatalogImporter
             'manufacturer_url' => $data['manufacturer_url'] ?? null,
             'manufacturer_image_url' => $data['manufacturer_image_url'] ?? null,
             'manufacturer_last_checked_at' => now(),
+            'price' => $price,
         ];
 
         return array_filter($attributes, fn ($value): bool => $value !== null);
