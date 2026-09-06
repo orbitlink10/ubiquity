@@ -68,6 +68,7 @@
     $productSeoFieldsReady = \App\Models\Product::seoFieldsReady();
     $productOfficialMediaFieldsReady = \App\Models\Product::officialMediaFieldsReady();
     $productManufacturerSourceFieldsReady = \App\Models\Product::manufacturerSourceFieldsReady();
+    $productMerchantFieldsReady = \App\Models\Product::merchantFieldsReady();
     $productFaqItems = old('faq_items', $productToEdit?->faq_items ?? [
         ['question' => '', 'answer' => ''],
         ['question' => '', 'answer' => ''],
@@ -450,6 +451,62 @@
                         <p class="admin-product-optional-copy">Upload a product image now, or leave it empty and add one later.</p>
                     </div>
                 </details>
+
+                @if($productMerchantFieldsReady)
+                    <details class="admin-product-optional-panel">
+                        <summary>Google Merchant</summary>
+                        <div class="admin-product-optional-body">
+                            <div class="admin-form-grid">
+                                <div>
+                                    <label class="admin-product-label" for="condition">Condition</label>
+                                    <select class="admin-product-input admin-product-select" id="condition" name="condition">
+                                        <option value="new" @selected(old('condition', $productToEdit?->condition ?? 'new') === 'new')>New</option>
+                                        <option value="used" @selected(old('condition', $productToEdit?->condition) === 'used')>Used</option>
+                                        <option value="refurbished" @selected(old('condition', $productToEdit?->condition) === 'refurbished')>Refurbished</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="admin-product-label" for="identifier_exists">Identifier exists</label>
+                                    <select class="admin-product-input admin-product-select" id="identifier_exists" name="identifier_exists">
+                                        <option value="1" @selected(old('identifier_exists', $productToEdit?->identifier_exists ?? true) == 1)>Yes</option>
+                                        <option value="0" @selected(old('identifier_exists', $productToEdit?->identifier_exists) == 0)>No</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="admin-form-grid">
+                                <div>
+                                    <label class="admin-product-label" for="gtin">GTIN</label>
+                                    <input class="admin-product-input" id="gtin" type="text" name="gtin" value="{{ old('gtin', $productToEdit?->gtin) }}" placeholder="Leave blank if unknown">
+                                </div>
+                                <div>
+                                    <label class="admin-product-label" for="mpn">MPN</label>
+                                    <input class="admin-product-input" id="mpn" type="text" name="mpn" value="{{ old('mpn', $productToEdit?->mpn) }}" placeholder="Manufacturer part number">
+                                </div>
+                            </div>
+
+                            <label class="admin-product-label" for="google_product_category">Google product category</label>
+                            <input class="admin-product-input" id="google_product_category" type="text" name="google_product_category" value="{{ old('google_product_category', $productToEdit?->google_product_category) }}" placeholder="Electronics > Communications > Networking > Access Points">
+
+                            <label class="admin-product-label" for="product_type">Product type</label>
+                            <input class="admin-product-input" id="product_type" type="text" name="product_type" value="{{ old('product_type', $productToEdit?->product_type) }}" placeholder="Networking > Ubiquiti > Access Points">
+
+                            <label class="admin-product-label" for="merchant_title">Merchant title</label>
+                            <input class="admin-product-input" id="merchant_title" type="text" name="merchant_title" value="{{ old('merchant_title', $productToEdit?->merchant_title) }}" maxlength="180" placeholder="Leave blank to auto-generate">
+
+                            <label class="admin-product-label" for="merchant_description">Merchant description</label>
+                            <textarea class="admin-product-input admin-product-textarea" id="merchant_description" name="merchant_description" rows="4" placeholder="Leave blank to use the product description">{{ old('merchant_description', $productToEdit?->merchant_description) }}</textarea>
+
+                            <div class="admin-product-field">
+                                <label class="admin-product-inline-note-title">Include in Google Merchant feed</label>
+                                <select class="admin-product-input admin-product-select" id="include_in_merchant_feed" name="include_in_merchant_feed">
+                                    <option value="1" @selected(old('include_in_merchant_feed', $productToEdit?->include_in_merchant_feed ?? true) == 1)>Yes</option>
+                                    <option value="0" @selected(old('include_in_merchant_feed', $productToEdit?->include_in_merchant_feed) == 0)>No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </details>
+                @endif
 
                 <div class="admin-product-actions">
                     <p>Leave price empty to show contact for price. Marked price is optional and must be greater than or equal to the selling price.</p>

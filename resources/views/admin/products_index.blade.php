@@ -48,8 +48,8 @@
                                 @endif
                             </td>
                             <td>{{ $product->name }}</td>
-                            <td>{{ number_format((float) $product->price, 2) }}</td>
-                            <td>No</td>
+                            <td>{{ $product->price !== null ? number_format((float) $product->price, 2) : '—' }}</td>
+                            <td>{{ ($product->include_in_merchant_feed ?? true) ? 'Yes' : 'No' }}</td>
                             <td>{{ $product->category?->name ?? 'General' }}</td>
                             <td>
                                 <div class="admin-action-stack">

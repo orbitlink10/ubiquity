@@ -211,6 +211,25 @@ class AdminController extends Controller
         return array_slice($normalized, 0, 12);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function merchantPayload(array $data): array
+    {
+        return [
+            'gtin' => $this->cleanOptionalText($data['gtin'] ?? null, 64),
+            'mpn' => $this->cleanOptionalText($data['mpn'] ?? null, 128),
+            'google_product_category' => $this->cleanOptionalText($data['google_product_category'] ?? null, 255),
+            'product_type' => $this->cleanOptionalText($data['product_type'] ?? null, 255),
+            'condition' => $data['condition'] ?? 'new',
+            'identifier_exists' => (bool) ($data['identifier_exists'] ?? true),
+            'include_in_merchant_feed' => (bool) ($data['include_in_merchant_feed'] ?? true),
+            'merchant_title' => $this->cleanOptionalText($data['merchant_title'] ?? null, 180),
+            'merchant_description' => $this->cleanOptionalText($data['merchant_description'] ?? null, 5000),
+        ];
+    }
+
     private function trustedOfficialImageUrlRule(): \Closure
     {
         return function (string $attribute, mixed $value, \Closure $fail): void {
@@ -1115,6 +1134,79 @@ class AdminController extends Controller
         ]);
     }
 
+    public function merchantDiagnostics(): View
+    {
+        $products = Product::query()
+            ->with(['vendor', 'category', 'images'])
+            ->orderBy('name')
+            ->get();
+
+        $feedReady = \App\Support\MerchantCatalog::class;
+        $issues = [];
+
+        foreach ($products as $product) {
+            $productIssues = [];
+
+            if ($product->status !== 'active') {
+                $productIssues[] = 'Not active';
+            }
+
+            if (! $product->vendor?->is_approved) {
+                $productIssues[] = 'Vendor not approved';
+            }
+
+            if ($product->price === null) {
+                $productIssues[] = 'Missing price';
+            }
+
+            if ($product->include_in_merchant_feed === false) {
+                $productIssues[] = 'Excluded from feed';
+            }
+
+            if (trim((string) $product->name) === '') {
+                $productIssues[] = 'Missing title';
+            }
+
+            if (trim((string) $product->brand) === '') {
+                $productIssues[] = 'Missing brand';
+            }
+
+            if (\App\Support\MerchantCatalog::mpn($product) === null && \App\Support\MerchantCatalog::gtin($product) === null) {
+                $productIssues[] = 'Missing MPN/GTIN';
+            }
+
+            if (\App\Support\MerchantCatalog::primaryImage($product) === null) {
+                $productIssues[] = 'Missing image';
+            }
+
+            if (is_array($product->robots) === false && str_contains((string) $product->robots, 'noindex')) {
+                $productIssues[] = 'Noindex';
+            }
+
+            if ($product->stock <= 0) {
+                $productIssues[] = 'Out of stock';
+            }
+
+            if ($productIssues !== []) {
+                $issues[] = [
+                    'product' => $product,
+                    'issues' => $productIssues,
+                ];
+            }
+        }
+
+        $eligible = $products->filter(fn (Product $product): bool => \App\Support\MerchantCatalog::isFeedEligible($product))->count();
+
+        return view('admin.merchant_diagnostics', [
+            'total' => $products->count(),
+            'eligible' => $eligible,
+            'excluded' => $products->count() - $eligible,
+            'issues' => $issues,
+            'feedUrl' => route('merchant.feed'),
+            'merchantFieldsReady' => Product::merchantFieldsReady(),
+        ]);
+    }
+
     public function createProductForm(): View
     {
         return view('admin.product_create', [
@@ -1185,6 +1277,20 @@ class AdminController extends Controller
             $rules = array_merge($rules, [
                 'manufacturer_url' => ['nullable', 'url', 'max:500', $this->trustedManufacturerUrlRule()],
                 'manufacturer_image_url' => ['nullable', 'url', 'max:500', $this->trustedOfficialImageUrlRule()],
+            ]);
+        }
+
+        if (Product::merchantFieldsReady()) {
+            $rules = array_merge($rules, [
+                'gtin' => ['nullable', 'string', 'max:64'],
+                'mpn' => ['nullable', 'string', 'max:128'],
+                'google_product_category' => ['nullable', 'string', 'max:255'],
+                'product_type' => ['nullable', 'string', 'max:255'],
+                'condition' => ['nullable', Rule::in(['new', 'used', 'refurbished'])],
+                'identifier_exists' => ['nullable', 'boolean'],
+                'include_in_merchant_feed' => ['nullable', 'boolean'],
+                'merchant_title' => ['nullable', 'string', 'max:180'],
+                'merchant_description' => ['nullable', 'string'],
             ]);
         }
 
@@ -1267,6 +1373,10 @@ class AdminController extends Controller
             ]);
         }
 
+        if (Product::merchantFieldsReady()) {
+            $payload = array_merge($payload, $this->merchantPayload($data));
+        }
+
         $product = Product::create($payload);
 
         $this->syncPrimaryProductImage($product, $request->file('image'));
@@ -1319,6 +1429,20 @@ class AdminController extends Controller
             $rules = array_merge($rules, [
                 'manufacturer_url' => ['nullable', 'url', 'max:500', $this->trustedManufacturerUrlRule()],
                 'manufacturer_image_url' => ['nullable', 'url', 'max:500', $this->trustedOfficialImageUrlRule()],
+            ]);
+        }
+
+        if (Product::merchantFieldsReady()) {
+            $rules = array_merge($rules, [
+                'gtin' => ['nullable', 'string', 'max:64'],
+                'mpn' => ['nullable', 'string', 'max:128'],
+                'google_product_category' => ['nullable', 'string', 'max:255'],
+                'product_type' => ['nullable', 'string', 'max:255'],
+                'condition' => ['nullable', Rule::in(['new', 'used', 'refurbished'])],
+                'identifier_exists' => ['nullable', 'boolean'],
+                'include_in_merchant_feed' => ['nullable', 'boolean'],
+                'merchant_title' => ['nullable', 'string', 'max:180'],
+                'merchant_description' => ['nullable', 'string'],
             ]);
         }
 
@@ -1391,6 +1515,10 @@ class AdminController extends Controller
                 'manufacturer_image_url' => $manufacturerImageUrl,
                 'manufacturer_last_checked_at' => ($manufacturerUrl || $manufacturerImageUrl) ? now() : null,
             ]);
+        }
+
+        if (Product::merchantFieldsReady()) {
+            $payload = array_merge($payload, $this->merchantPayload($data));
         }
 
         $product->update($payload);

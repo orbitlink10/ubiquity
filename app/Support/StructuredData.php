@@ -27,10 +27,8 @@ class StructuredData
                 '@type' => 'Offer',
                 'url' => $canonicalUrl,
                 'priceCurrency' => 'KES',
-                'price' => number_format((float) $product->price, 2, '.', ''),
-                'availability' => ProductPricing::canPurchase($product)
-                    ? 'https://schema.org/InStock'
-                    : 'https://schema.org/LimitedAvailability',
+                'availability' => MerchantCatalog::schemaAvailability($product),
+                'itemCondition' => MerchantCatalog::conditionSchema($product),
                 'seller' => [
                     '@type' => 'Organization',
                     'name' => config('business.name', config('app.name', 'Ubiquiti UniFi Kenya')),
@@ -42,12 +40,16 @@ class StructuredData
             $schema['sku'] = $product->sku;
         }
 
-        if (trim(ProductSeo::model($product)) !== '') {
-            $schema['mpn'] = ProductSeo::model($product);
+        if ($mpn = MerchantCatalog::mpn($product)) {
+            $schema['mpn'] = $mpn;
         }
 
-        if ($product->price === null) {
-            unset($schema['offers']['price']);
+        if ($gtin = MerchantCatalog::gtin($product)) {
+            $schema['gtin'] = $gtin;
+        }
+
+        if ($product->price !== null) {
+            $schema['offers']['price'] = number_format((float) $product->price, 2, '.', '');
         }
 
         return $schema;

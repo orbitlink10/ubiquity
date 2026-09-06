@@ -159,6 +159,9 @@ class UbiquitiCatalogImporter
             'manufacturer_image_url' => $data['manufacturer_image_url'] ?? null,
             'manufacturer_last_checked_at' => now(),
             'price' => $price,
+            'mpn' => MerchantCatalog::cleanMpn($data['sku'] ?? $data['model'] ?? null),
+            'google_product_category' => MerchantCatalog::googleCategories()[$data['category'] ?? ''] ?? null,
+            'product_type' => MerchantCatalog::productTypes()[$data['category'] ?? ''] ?? null,
         ];
 
         return array_filter($attributes, fn ($value): bool => $value !== null);

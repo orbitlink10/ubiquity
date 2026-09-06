@@ -27,6 +27,15 @@ class Product extends Model
         'compare_at_price',
         'stock',
         'sku',
+        'gtin',
+        'mpn',
+        'google_product_category',
+        'product_type',
+        'condition',
+        'identifier_exists',
+        'include_in_merchant_feed',
+        'merchant_title',
+        'merchant_description',
         'status',
         'seo_title',
         'canonical_url',
@@ -65,6 +74,8 @@ class Product extends Model
         'official_gallery_images' => 'array',
         'official_media_synced_at' => 'datetime',
         'manufacturer_last_checked_at' => 'datetime',
+        'identifier_exists' => 'boolean',
+        'include_in_merchant_feed' => 'boolean',
     ];
 
     public function getRouteKeyName(): string
@@ -107,6 +118,20 @@ class Product extends Model
             && Schema::hasColumn($table, 'manufacturer_url')
             && Schema::hasColumn($table, 'manufacturer_image_url')
             && Schema::hasColumn($table, 'manufacturer_last_checked_at');
+    }
+
+    public static function merchantFieldsReady(): bool
+    {
+        $table = (new static)->getTable();
+
+        return Schema::hasTable($table)
+            && Schema::hasColumn($table, 'gtin')
+            && Schema::hasColumn($table, 'mpn')
+            && Schema::hasColumn($table, 'google_product_category')
+            && Schema::hasColumn($table, 'product_type')
+            && Schema::hasColumn($table, 'condition')
+            && Schema::hasColumn($table, 'identifier_exists')
+            && Schema::hasColumn($table, 'include_in_merchant_feed');
     }
 
     public function vendor(): BelongsTo

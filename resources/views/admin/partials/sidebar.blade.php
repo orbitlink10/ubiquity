@@ -10,6 +10,7 @@
         ['id' => 'categories', 'label' => 'Categories', 'badge' => 'CT', 'href' => route('admin.categories.index')],
         ['id' => 'subcategories', 'label' => 'Sub Categories', 'badge' => 'SC', 'href' => route('admin.subcategories.index')],
         ['id' => 'products', 'label' => 'Products', 'badge' => 'PR', 'href' => route('admin.products.index')],
+        ['id' => 'merchant', 'label' => 'Merchant Feed', 'badge' => 'MC', 'href' => route('admin.merchant.index')],
         ['id' => 'pages', 'label' => 'Pages', 'badge' => 'PG', 'href' => route('admin.pages.index')],
         ['id' => 'orders', 'label' => 'Orders', 'badge' => 'OR', 'href' => route('admin.orders.index')],
         ['id' => 'invoices', 'label' => 'Invoices', 'badge' => 'IV', 'href' => route('admin.invoices.index')],
@@ -68,6 +69,14 @@ SVG,
     <path d="M14 4v5h5"></path>
     <path d="M9 13h6"></path>
     <path d="M9 17h6"></path>
+</svg>
+SVG,
+        'merchant' => <<<'SVG'
+<svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M4 4h16v16H4z"></path>
+    <path d="M8 8h8v2H8z"></path>
+    <path d="M8 12h5"></path>
+    <path d="M8 15h3"></path>
 </svg>
 SVG,
         'orders' => <<<'SVG'

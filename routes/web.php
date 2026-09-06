@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ComparisonController;
+use App\Http\Controllers\MerchantFeedController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StorefrontController;
 use App\Http\Controllers\VendorController;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [StorefrontController::class, 'index'])->name('home');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/google-merchant-feed.xml', MerchantFeedController::class)->name('merchant.feed');
 Route::get('/compare/{comparison}', [ComparisonController::class, 'show'])
     ->where('comparison', 'u6-plus-vs-u6-pro|u6-pro-vs-u6-lr|u7-pro-vs-u6-pro|u7-pro-vs-u7-pro-max|cloud-gateway-ultra-vs-cloud-gateway-max')
     ->name('comparison.show');
@@ -106,6 +108,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/products/{product}/edit', [AdminController::class, 'editProductForm'])->name('products.edit');
     Route::put('/products/{product}', [AdminController::class, 'updateProduct'])->name('products.update');
     Route::delete('/products/{product}', [AdminController::class, 'destroyProduct'])->name('products.destroy');
+    Route::get('/merchant', [AdminController::class, 'merchantDiagnostics'])->name('merchant.index');
     Route::get('/pages', [AdminController::class, 'pagesIndex'])->name('pages.index');
     Route::get('/pages/create', [AdminController::class, 'createPageForm'])->name('pages.create');
     Route::post('/pages', [AdminController::class, 'storePage'])->name('pages.store');
