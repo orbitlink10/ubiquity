@@ -62,18 +62,9 @@
     $productBoxItems = \App\Support\ProductSeo::whatsInBox($product);
     $productFaqItems = \App\Support\ProductSeo::faqs($product);
     $chooseAnotherModel = \App\Support\ProductSeo::chooseAnotherModel($product);
-    $vendorPhoneDigits = preg_replace('/\D+/', '', (string) $product->vendor->phone);
-    if ($vendorPhoneDigits !== '') {
-        if (str_starts_with($vendorPhoneDigits, '0')) {
-            $vendorPhoneDigits = '254' . substr($vendorPhoneDigits, 1);
-        } elseif (!str_starts_with($vendorPhoneDigits, '254') && strlen($vendorPhoneDigits) === 9) {
-            $vendorPhoneDigits = '254' . $vendorPhoneDigits;
-        }
-    }
-
-    $whatsAppUrl = $vendorPhoneDigits !== ''
-        ? 'https://wa.me/' . $vendorPhoneDigits . '?text=' . rawurlencode('Hello, I would like to inquire about ' . $product->name . '.')
-        : null;
+    $whatsAppUrl = 'https://wa.me/254714804532?text=' . rawurlencode(
+        'Hello, I would like to order ' . $productDisplayName . '. ' . $productCanonicalUrl
+    );
 
     $breadcrumbItems = [
         ['name' => 'Home', 'url' => \App\Support\CanonicalUrl::route('home')],
@@ -230,7 +221,7 @@
                                 <button type="submit" name="redirect" value="checkout" class="product-primary-cta">Buy Now</button>
                                 <button type="submit" name="redirect" value="cart" class="product-secondary-cta">Add to Cart</button>
                                 @if($whatsAppUrl)
-                                    <a class="product-whatsapp-cta" href="{{ $whatsAppUrl }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                                    <a class="product-whatsapp-cta" href="{{ $whatsAppUrl }}" target="_blank" rel="noopener noreferrer">Order via WhatsApp</a>
                                 @endif
                             </div>
                         </form>
@@ -238,7 +229,7 @@
                         <div class="product-cta-row">
                             <a class="product-primary-cta" href="{{ route('login') }}">Add to Cart</a>
                             @if($whatsAppUrl)
-                                <a class="product-whatsapp-cta" href="{{ $whatsAppUrl }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                                <a class="product-whatsapp-cta" href="{{ $whatsAppUrl }}" target="_blank" rel="noopener noreferrer">Order via WhatsApp</a>
                             @endif
                         </div>
                     @endauth
@@ -246,7 +237,7 @@
                     <div class="product-cta-row">
                         <button type="button" class="product-primary-cta" disabled>{{ $disabledPurchaseLabel }}</button>
                         @if($whatsAppUrl)
-                            <a class="product-whatsapp-cta" href="{{ $whatsAppUrl }}" target="_blank" rel="noopener noreferrer">Ask on WhatsApp</a>
+                            <a class="product-whatsapp-cta" href="{{ $whatsAppUrl }}" target="_blank" rel="noopener noreferrer">Order via WhatsApp</a>
                         @endif
                     </div>
                 @endif
@@ -484,7 +475,7 @@
                 <a class="product-sticky-cta" href="{{ route('login') }}">Add to Cart</a>
             @endauth
             @if($whatsAppUrl)
-                <a class="product-sticky-whatsapp" href="{{ $whatsAppUrl }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                <a class="product-sticky-whatsapp" href="{{ $whatsAppUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Order via WhatsApp">WhatsApp</a>
             @endif
         </div>
     @endif
