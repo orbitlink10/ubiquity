@@ -2219,4 +2219,661 @@ Max. Power Consumption: 60W
 IDS/IPS: 5 Gbps
 Managed Cameras: (50) HD (25) 2K (15) 4K',
 ),
+    array (
+  'slug' => 'ubiquiti-airmax-nanostation-m5',
+  'name' => 'Ubiquiti airMAX NanoStation M5',
+  'model' => 'NSM5',
+  'sku' => 'NSM5',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'nanostation',
+    1 => 'ubiquiti-point-to-point',
+  ),
+  'h1' => 'Ubiquiti airMAX NanoStation M5 (NSM5)',
+  'seo_title' => 'Ubiquiti NanoStation M5 NSM5 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 16 dBi airMAX outdoor CPE with 2x2 MIMO, 150+ Mbps throughput, dual Ethernet and up to 15+ km range.',
+  'description' => '<p>Ubiquiti airMAX NanoStation M5 (NSM5) is a compact outdoor 5 GHz Customer Premises Equipment (CPE) radio for point-to-point and point-to-multipoint wireless links in Kenya.</p><p>It features an integrated 16 dBi 2x2 MIMO antenna, 150+ Mbps throughput, up to 15+ km range, dual Ethernet connectivity and 24V passive PoE.</p><p>It works as an access point or client bridge and is suited to ISP, building-to-building and remote site connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'Outdoor point-to-point and point-to-multipoint wireless links',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 16 dBi
+MIMO: 2x2
+Throughput: 150+ Mbps
+Range: 15+ km
+Ethernet Ports: 2 x 10/100',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 16 dBi
+MIMO: 2x2
+Throughput: 150+ Mbps
+Range: 15+ km
+Ethernet Ports: 2 x 10/100
+Power Method: 24V Passive PoE
+Max. Power Consumption: 8W
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-nanostation-m2',
+  'name' => 'Ubiquiti airMAX NanoStation M2',
+  'model' => 'NSM2',
+  'sku' => 'NSM2',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'nanostation',
+  ),
+  'h1' => 'Ubiquiti airMAX NanoStation M2 (NSM2)',
+  'seo_title' => 'Ubiquiti NanoStation M2 NSM2 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '2.4 GHz 11 dBi airMAX outdoor CPE with 2x2 MIMO, 150+ Mbps throughput and up to 13+ km range.',
+  'description' => '<p>Ubiquiti airMAX NanoStation M2 (NSM2) is a compact outdoor 2.4 GHz CPE radio for point-to-point and point-to-multipoint wireless links in Kenya.</p><p>It features an integrated 11 dBi 2x2 MIMO antenna, 150+ Mbps throughput, up to 13+ km range, dual Ethernet connectivity and 24V passive PoE.</p><p>It is suited to ISP deployments, building-to-building links and remote site connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'Outdoor point-to-point and point-to-multipoint wireless links',
+  'key_specifications' => 'Frequency: 2.4 GHz
+Antenna Gain: 11 dBi
+MIMO: 2x2
+Throughput: 150+ Mbps
+Range: 13+ km
+Ethernet Ports: 2 x 10/100',
+  'technical_specifications' => 'Frequency: 2.4 GHz
+Antenna Gain: 11 dBi
+MIMO: 2x2
+Throughput: 150+ Mbps
+Range: 13+ km
+Ethernet Ports: 2 x 10/100
+Power Method: 24V Passive PoE
+Max. Power Consumption: 6W
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-nanostation-loco-m5',
+  'name' => 'Ubiquiti airMAX NanoStation Loco M5',
+  'model' => 'locoM5',
+  'sku' => 'LocoM5',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'nanostation',
+  ),
+  'h1' => 'Ubiquiti airMAX NanoStation Loco M5',
+  'seo_title' => 'Ubiquiti NanoStation Loco M5 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => 'Compact 5 GHz 13 dBi airMAX outdoor CPE with 2x2 MIMO, 150+ Mbps throughput and up to 10+ km range.',
+  'description' => '<p>Ubiquiti airMAX NanoStation Loco M5 (locoM5) is an ultra-compact outdoor 5 GHz CPE radio for point-to-point and point-to-multipoint wireless links in Kenya.</p><p>It features an integrated 13 dBi 2x2 MIMO antenna, 150+ Mbps throughput, up to 10+ km range and 24V passive PoE in a small form factor.</p><p>It is suited to ISP customer premises, building-to-building links and remote site connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'Compact outdoor point-to-point and point-to-multipoint links',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 13 dBi
+MIMO: 2x2
+Throughput: 150+ Mbps
+Range: 10+ km
+Ethernet Ports: 1 x 10/100',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 13 dBi
+MIMO: 2x2
+Throughput: 150+ Mbps
+Range: 10+ km
+Ethernet Ports: 1 x 10/100
+Power Method: 24V Passive PoE
+Max. Power Consumption: 5.5W
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-nanostation-loco-m2',
+  'name' => 'Ubiquiti airMAX NanoStation Loco M2',
+  'model' => 'locoM2',
+  'sku' => 'LocoM2',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'nanostation',
+  ),
+  'h1' => 'Ubiquiti airMAX NanoStation Loco M2',
+  'seo_title' => 'Ubiquiti NanoStation Loco M2 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => 'Compact 2.4 GHz 8 dBi airMAX outdoor CPE with 150+ Mbps throughput and up to 5+ km range.',
+  'description' => '<p>Ubiquiti airMAX NanoStation Loco M2 (locoM2) is an ultra-compact outdoor 2.4 GHz CPE radio for point-to-point and point-to-multipoint wireless links in Kenya.</p><p>It features an integrated 8 dBi antenna, 150+ Mbps throughput, up to 5+ km range and 24V passive PoE in a small form factor.</p><p>It is suited to ISP customer premises, short building-to-building links and remote site connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'Compact outdoor point-to-point and point-to-multipoint links',
+  'key_specifications' => 'Frequency: 2.4 GHz
+Antenna Gain: 8 dBi
+Throughput: 150+ Mbps
+Range: 5+ km
+Ethernet Ports: 1 x 10/100',
+  'technical_specifications' => 'Frequency: 2.4 GHz
+Antenna Gain: 8 dBi
+Throughput: 150+ Mbps
+Range: 5+ km
+Ethernet Ports: 1 x 10/100
+Power Method: 24V Passive PoE
+Max. Power Consumption: 5.5W
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-nanostation-5ac-loco',
+  'name' => 'Ubiquiti airMAX NanoStation 5AC Loco',
+  'model' => 'NS-5ACL',
+  'sku' => 'NS-5ACL',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'nanostation',
+  ),
+  'h1' => 'Ubiquiti airMAX NanoStation 5AC Loco',
+  'seo_title' => 'Ubiquiti NanoStation 5AC Loco Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => 'Compact 5 GHz 13 dBi airMAX ac outdoor CPE with 450+ Mbps throughput and up to 10+ km range.',
+  'description' => '<p>Ubiquiti airMAX NanoStation 5AC Loco (NS-5ACL) is a compact outdoor 5 GHz CPE radio using airMAX ac technology for point-to-point and point-to-multipoint links in Kenya.</p><p>It features an integrated 13 dBi antenna, 450+ Mbps throughput, up to 10+ km range and 24V passive PoE.</p><p>It is suited to high-speed ISP customer premises and building-to-building links. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'High-speed outdoor point-to-point and point-to-multipoint links',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 13 dBi
+Technology: airMAX ac
+Throughput: 450+ Mbps
+Range: 10+ km
+Ethernet Ports: 1 x 10/100/1000',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 13 dBi
+Technology: airMAX ac
+Throughput: 450+ Mbps
+Range: 10+ km
+Ethernet Ports: 1 x 10/100/1000
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-nanostation-5ac',
+  'name' => 'Ubiquiti airMAX NanoStation 5AC',
+  'model' => 'NS-5AC',
+  'sku' => 'NS-5AC',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'nanostation',
+  ),
+  'h1' => 'Ubiquiti airMAX NanoStation 5AC (NS-5AC)',
+  'seo_title' => 'Ubiquiti NanoStation 5AC Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 16 dBi airMAX ac outdoor CPE with 450+ Mbps throughput, dual Ethernet and up to 15+ km range.',
+  'description' => '<p>Ubiquiti airMAX NanoStation 5AC (NS-5AC) is an outdoor 5 GHz CPE radio using airMAX ac technology for point-to-point and point-to-multipoint wireless links in Kenya.</p><p>It features an integrated 16 dBi antenna, 450+ Mbps throughput, up to 15+ km range, dual Ethernet connectivity and 24V passive PoE.</p><p>It works as an access point or client bridge and is suited to high-speed ISP and building-to-building links. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'High-speed outdoor point-to-point and point-to-multipoint links',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 16 dBi
+Technology: airMAX ac
+Throughput: 450+ Mbps
+Range: 15+ km
+Ethernet Ports: 2 x 10/100/1000',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 16 dBi
+Technology: airMAX ac
+Throughput: 450+ Mbps
+Range: 15+ km
+Ethernet Ports: 2 x 10/100/1000
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-litebeam-m5',
+  'name' => 'Ubiquiti airMAX LiteBeam M5',
+  'model' => 'LBE-M5-23',
+  'sku' => 'LBE-M5-23',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'litebeam',
+    1 => 'ubiquiti-point-to-point',
+  ),
+  'h1' => 'Ubiquiti airMAX LiteBeam M5 (LBE-M5-23)',
+  'seo_title' => 'Ubiquiti LiteBeam M5 LBE-M5-23 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 23 dBi airMAX outdoor radio with 150+ Mbps throughput and up to 30+ km range.',
+  'description' => '<p>Ubiquiti airMAX LiteBeam M5 (LBE-M5-23) is a lightweight outdoor 5 GHz radio for long-range point-to-point wireless links in Kenya.</p><p>It features an integrated 23 dBi antenna, 150+ Mbps throughput, up to 30+ km range and 24V passive PoE.</p><p>It is suited to ISP backhaul, building-to-building and remote site connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'Long-range outdoor point-to-point wireless links',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 23 dBi
+Throughput: 150+ Mbps
+Range: 30+ km
+Ethernet Ports: 1 x 10/100',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 23 dBi
+Throughput: 150+ Mbps
+Range: 30+ km
+Ethernet Ports: 1 x 10/100
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-liteap-120',
+  'name' => 'Ubiquiti LiteAP 120',
+  'model' => 'LAP-120',
+  'sku' => 'LAP-120',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+  ),
+  'h1' => 'Ubiquiti LiteAP 120 (LAP-120)',
+  'seo_title' => 'Ubiquiti LiteAP 120 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 16 dBi 120 degree sector airMAX ac access point with 450+ Mbps throughput and GPS sync.',
+  'description' => '<p>Ubiquiti LiteAP 120 (LAP-120) is a 5 GHz 120 degree sector access point using airMAX ac technology for point-to-multipoint base station deployments in Kenya.</p><p>It features an integrated 16 dBi sector antenna, 450+ Mbps throughput, GPS synchronization and 24V passive PoE.</p><p>It is suited to ISP base stations and wide-area outdoor WiFi coverage. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'Outdoor point-to-multipoint sector access point',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 16 dBi
+Beamwidth: 120 degrees
+Technology: airMAX ac
+Throughput: 450+ Mbps
+GPS Sync: Yes',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 16 dBi
+Beamwidth: 120 degrees
+Technology: airMAX ac
+Throughput: 450+ Mbps
+GPS Sync: Yes
+Ethernet Ports: 1 x 10/100/1000
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-liteap-gps',
+  'name' => 'Ubiquiti LiteAP GPS',
+  'model' => 'LAP-GPS',
+  'sku' => 'LAP-GPS',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+  ),
+  'h1' => 'Ubiquiti LiteAP GPS (LAP-GPS)',
+  'seo_title' => 'Ubiquiti LiteAP GPS Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 13 dBi 120 degree sector airMAX ac access point with GPS sync for base station deployments.',
+  'description' => '<p>Ubiquiti LiteAP GPS (LAP-GPS) is a 5 GHz 120 degree sector access point using airMAX ac technology with GPS synchronization for point-to-multipoint base station deployments in Kenya.</p><p>It features an integrated 13 dBi sector antenna, 450+ Mbps throughput and 24V passive PoE.</p><p>It is suited to synchronized ISP base stations and wide-area outdoor coverage. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'GPS-synchronized outdoor point-to-multipoint access point',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 13 dBi
+Beamwidth: 120 degrees
+Technology: airMAX ac
+GPS Sync: Yes',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 13 dBi
+Beamwidth: 120 degrees
+Technology: airMAX ac
+GPS Sync: Yes
+Ethernet Ports: 1 x 10/100/1000
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-powerbeam-m2-400',
+  'name' => 'Ubiquiti airMAX PowerBeam M2',
+  'model' => 'PBE-M2-400',
+  'sku' => 'PBE-M2-400',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'powerbeam',
+    1 => 'ubiquiti-point-to-point',
+  ),
+  'h1' => 'Ubiquiti airMAX PowerBeam M2 (PBE-M2-400)',
+  'seo_title' => 'Ubiquiti PowerBeam M2 PBE-M2-400 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '2.4 GHz 18 dBi airMAX 400 mm dish radio with 150+ Mbps throughput and up to 25+ km range.',
+  'description' => '<p>Ubiquiti airMAX PowerBeam M2 (PBE-M2-400) is an outdoor 2.4 GHz radio with an integrated 400 mm dish antenna for long-range point-to-point wireless links in Kenya.</p><p>It features an 18 dBi gain, 150+ Mbps throughput, up to 25+ km range and 24V passive PoE.</p><p>It is suited to ISP backhaul and building-to-building connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'Long-range outdoor point-to-point wireless links',
+  'key_specifications' => 'Frequency: 2.4 GHz
+Antenna Gain: 18 dBi
+Dish Size: 400 mm
+Throughput: 150+ Mbps
+Range: 25+ km',
+  'technical_specifications' => 'Frequency: 2.4 GHz
+Antenna Gain: 18 dBi
+Dish Size: 400 mm
+Throughput: 150+ Mbps
+Range: 25+ km
+Ethernet Ports: 1 x 10/100
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-powerbeam-m5-400',
+  'name' => 'Ubiquiti airMAX PowerBeam M5',
+  'model' => 'PBE-M5-400',
+  'sku' => 'PBE-M5-400',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'powerbeam',
+    1 => 'ubiquiti-point-to-point',
+  ),
+  'h1' => 'Ubiquiti airMAX PowerBeam M5 (PBE-M5-400)',
+  'seo_title' => 'Ubiquiti PowerBeam M5 PBE-M5-400 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 25 dBi airMAX 400 mm dish radio with 150+ Mbps throughput and up to 25+ km range.',
+  'description' => '<p>Ubiquiti airMAX PowerBeam M5 (PBE-M5-400) is an outdoor 5 GHz radio with an integrated 400 mm dish antenna for long-range point-to-point wireless links in Kenya.</p><p>It features a 25 dBi gain, 150+ Mbps throughput, up to 25+ km range and 24V passive PoE.</p><p>It is suited to ISP backhaul and building-to-building connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'Long-range outdoor point-to-point wireless links',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 25 dBi
+Dish Size: 400 mm
+Throughput: 150+ Mbps
+Range: 25+ km',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 25 dBi
+Dish Size: 400 mm
+Throughput: 150+ Mbps
+Range: 25+ km
+Ethernet Ports: 1 x 10/100
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-powerbeam-5ac-gen2',
+  'name' => 'Ubiquiti airMAX PowerBeam 5AC Gen2',
+  'model' => 'PBE-5AC-Gen2',
+  'sku' => 'PBE-5AC-Gen2',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'powerbeam',
+    1 => 'ubiquiti-point-to-point',
+  ),
+  'h1' => 'Ubiquiti airMAX PowerBeam 5AC Gen2 (PBE-5AC-Gen2)',
+  'seo_title' => 'Ubiquiti PowerBeam 5AC Gen2 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 25 dBi airMAX ac 400 mm dish radio with 450+ Mbps throughput and up to 25+ km range.',
+  'description' => '<p>Ubiquiti airMAX PowerBeam 5AC Gen2 (PBE-5AC-Gen2) is an outdoor 5 GHz radio with an integrated 400 mm dish antenna using airMAX ac technology for long-range point-to-point links in Kenya.</p><p>It features a 25 dBi gain, 450+ Mbps throughput, up to 25+ km range and 24V passive PoE.</p><p>It is suited to high-speed ISP backhaul and building-to-building connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'High-speed long-range point-to-point wireless links',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 25 dBi
+Dish Size: 400 mm
+Technology: airMAX ac
+Throughput: 450+ Mbps
+Range: 25+ km',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 25 dBi
+Dish Size: 400 mm
+Technology: airMAX ac
+Throughput: 450+ Mbps
+Range: 25+ km
+Ethernet Ports: 1 x 10/100/1000
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-powerbeam-5ac-500',
+  'name' => 'Ubiquiti PowerBeam 5AC-500',
+  'model' => 'PBE-5AC-500',
+  'sku' => 'PBE-5AC-500',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'powerbeam',
+    1 => 'ubiquiti-point-to-point',
+  ),
+  'h1' => 'Ubiquiti PowerBeam 5AC-500 (PBE-5AC-500)',
+  'seo_title' => 'Ubiquiti PowerBeam 5AC-500 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 27 dBi airMAX ac 500 mm dish radio with 450+ Mbps throughput and up to 30+ km range.',
+  'description' => '<p>Ubiquiti PowerBeam 5AC-500 (PBE-5AC-500) is a high-performance outdoor 5 GHz radio with an integrated 500 mm dish antenna using airMAX ac technology for long-range point-to-point links in Kenya.</p><p>It features a 27 dBi gain, 450+ Mbps throughput, up to 30+ km range and 24V passive PoE.</p><p>It is suited to high-capacity ISP backhaul and building-to-building connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'High-capacity long-range point-to-point wireless links',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 27 dBi
+Dish Size: 500 mm
+Technology: airMAX ac
+Throughput: 450+ Mbps
+Range: 30+ km',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 27 dBi
+Dish Size: 500 mm
+Technology: airMAX ac
+Throughput: 450+ Mbps
+Range: 30+ km
+Ethernet Ports: 1 x 10/100/1000
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-powerbeam-5ac-620',
+  'name' => 'Ubiquiti PowerBeam 5AC-620',
+  'model' => 'PBE-5AC-620',
+  'sku' => 'PBE-5AC-620',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'powerbeam',
+    1 => 'ubiquiti-point-to-point',
+  ),
+  'h1' => 'Ubiquiti PowerBeam 5AC-620 (PBE-5AC-620)',
+  'seo_title' => 'Ubiquiti PowerBeam 5AC-620 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 29 dBi airMAX ac 620 mm dish radio with 450+ Mbps throughput and up to 30+ km range.',
+  'description' => '<p>Ubiquiti PowerBeam 5AC-620 (PBE-5AC-620) is a high-performance outdoor 5 GHz radio with an integrated 620 mm dish antenna using airMAX ac technology for long-range point-to-point links in Kenya.</p><p>It features a 29 dBi gain, 450+ Mbps throughput, up to 30+ km range and 24V passive PoE.</p><p>It is suited to high-capacity ISP backhaul and building-to-building connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'High-capacity long-range point-to-point wireless links',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 29 dBi
+Dish Size: 620 mm
+Technology: airMAX ac
+Throughput: 450+ Mbps
+Range: 30+ km',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 29 dBi
+Dish Size: 620 mm
+Technology: airMAX ac
+Throughput: 450+ Mbps
+Range: 30+ km
+Ethernet Ports: 1 x 10/100/1000
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-rocket-5ac-lite',
+  'name' => 'Ubiquiti airMAX Rocket AC Lite',
+  'model' => 'R5AC-Lite',
+  'sku' => 'R5AC-Lite',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'rocket',
+  ),
+  'h1' => 'Ubiquiti airMAX Rocket AC Lite (R5AC-Lite)',
+  'seo_title' => 'Ubiquiti Rocket AC Lite Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz airMAX ac Rocket radio with 500+ Mbps throughput for dish and sector antenna base stations.',
+  'description' => '<p>Ubiquiti airMAX Rocket AC Lite (R5AC-Lite) is a 5 GHz airMAX ac radio designed to pair with RocketDish and sector antennas for point-to-point and point-to-multipoint base stations in Kenya.</p><p>It features 500+ Mbps throughput and 24V passive PoE with an integrated GPS radio for synchronized deployments.</p><p>It is suited to ISP base stations and long-range backhaul. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'Base station radio for dish and sector antenna deployments',
+  'key_specifications' => 'Frequency: 5 GHz
+Technology: airMAX ac
+Throughput: 500+ Mbps
+GPS Sync: Yes
+Antenna: Requires external RocketDish or sector',
+  'technical_specifications' => 'Frequency: 5 GHz
+Technology: airMAX ac
+Throughput: 500+ Mbps
+GPS Sync: Yes
+Antenna: Requires external RocketDish or sector
+Ethernet Ports: 1 x 10/100/1000
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Dish or sector antenna mount',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-rocket-prism-5ac-gen2',
+  'name' => 'Ubiquiti airMAX Rocket Prism 5AC Gen2',
+  'model' => 'RP-5AC-Gen2',
+  'sku' => 'RP-5AC-Gen2',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airmax',
+  'categories' => 
+  array (
+    0 => 'rocket-prism',
+  ),
+  'h1' => 'Ubiquiti airMAX Rocket Prism 5AC Gen2 (RP-5AC-Gen2)',
+  'seo_title' => 'Ubiquiti Rocket Prism 5AC Gen2 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz airMAX ac Rocket radio with airPrism filtering and 500+ Mbps throughput for high-density base stations.',
+  'description' => '<p>Ubiquiti airMAX Rocket Prism 5AC Gen2 (RP-5AC-Gen2) is a 5 GHz airMAX ac radio with airPrism technology designed to pair with RocketDish and sector antennas for high-density base stations in Kenya.</p><p>It features 500+ Mbps throughput, airPrism RF filtering, GPS synchronization and 24V passive PoE.</p><p>It is suited to ISP base stations in noisy RF environments and long-range backhaul. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'High-density base station radio with airPrism filtering',
+  'key_specifications' => 'Frequency: 5 GHz
+Technology: airMAX ac
+airPrism: Yes
+Throughput: 500+ Mbps
+GPS Sync: Yes
+Antenna: Requires external RocketDish or sector',
+  'technical_specifications' => 'Frequency: 5 GHz
+Technology: airMAX ac
+airPrism: Yes
+Throughput: 500+ Mbps
+GPS Sync: Yes
+Antenna: Requires external RocketDish or sector
+Ethernet Ports: 1 x 10/100/1000
+Power Method: 24V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Dish or sector antenna mount',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-sector-antenna-am-5g19-120',
+  'name' => 'Ubiquiti airMAX Sector Antenna AM-5G19-120',
+  'model' => 'AM-5G19-120',
+  'sku' => 'AM-5G19-120',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-antennas',
+  'categories' => 
+  array (
+    0 => 'sector-antennas',
+    1 => 'airmax-antennas',
+  ),
+  'h1' => 'Ubiquiti airMAX AM-5G19-120 Sector Antenna',
+  'seo_title' => 'Ubiquiti AM-5G19-120 Sector Antenna Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 19 dBi 120 degree airMAX sector antenna for point-to-multipoint base stations.',
+  'description' => '<p>Ubiquiti airMAX AM-5G19-120 is a 5 GHz 120 degree sector antenna designed for airMAX point-to-multipoint base station deployments in Kenya.</p><p>It features 19 dBi gain and 2x2 MIMO to pair with Rocket radios for wide-area coverage.</p><p>It is suited to ISP base stations and outdoor wireless coverage. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'Sector antenna for point-to-multipoint base stations',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 19 dBi
+Beamwidth: 120 degrees
+MIMO: 2x2
+Compatible Radio: Rocket',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 19 dBi
+Beamwidth: 120 degrees
+MIMO: 2x2
+Compatible Radio: Rocket
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airmax-rocketdish-5g30',
+  'name' => 'Ubiquiti RocketDish 5G30',
+  'model' => 'RD-5G30',
+  'sku' => 'RD-5G30',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-antennas',
+  'categories' => 
+  array (
+    0 => 'dish-antennas',
+  ),
+  'h1' => 'Ubiquiti airMAX RocketDish 5GHz 30dBi (RD-5G30)',
+  'seo_title' => 'Ubiquiti RocketDish 5G30 Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz 30 dBi lightweight dish antenna for Rocket radios and long-range point-to-point links.',
+  'description' => '<p>Ubiquiti RocketDish RD-5G30 is a lightweight 5 GHz 30 dBi dish antenna designed to pair with Rocket radios for long-range point-to-point wireless links in Kenya.</p><p>It provides high gain for backhaul links where maximum distance and signal quality are required.</p><p>It is suited to ISP backhaul and long-range building-to-building connectivity. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'High-gain dish antenna for long-range point-to-point links',
+  'key_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 30 dBi
+Type: Dish antenna
+Compatible Radio: Rocket',
+  'technical_specifications' => 'Frequency: 5 GHz
+Antenna Gain: 30 dBi
+Type: Dish antenna
+Compatible Radio: Rocket
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-airfiber-5xhd',
+  'name' => 'Ubiquiti airFiber 5XHD',
+  'model' => 'AF-5XHD',
+  'sku' => 'AF-5XHD',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-airfiber',
+  'categories' => 
+  array (
+  ),
+  'h1' => 'Ubiquiti airFiber 5XHD (AF-5XHD)',
+  'seo_title' => 'Ubiquiti airFiber 5XHD Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '5 GHz airFiber/LTU radio with 1 Gbps+ aggregate throughput and up to 200+ km range for wireless backhaul.',
+  'description' => '<p>Ubiquiti airFiber 5XHD (AF-5XHD) is a high-capacity 5 GHz radio using LTU technology for long-range wireless backhaul links in Kenya.</p><p>It features 1 Gbps+ aggregate throughput, up to 200+ km range and flexible frequency band operation.</p><p>It is suited to ISP backhaul and high-capacity point-to-point links. Confirm current pricing and stock availability in Kenya before ordering.</p>',
+  'key_use' => 'High-capacity long-range wireless backhaul',
+  'key_specifications' => 'Frequency: 5 GHz
+Technology: LTU
+Throughput: 1 Gbps+ aggregate
+Range: 200+ km',
+  'technical_specifications' => 'Frequency: 5 GHz
+Technology: LTU
+Throughput: 1 Gbps+ aggregate
+Range: 200+ km
+Ethernet Ports: 1 x 10/100/1000
+Power Method: 50V Passive PoE
+Enclosure: Outdoor UV-stabilized plastic
+Mounting: Pole mount kit included',
+),
+    array (
+  'slug' => 'ubiquiti-poe-24-24v-05a',
+  'name' => 'Ubiquiti PoE Adapter 24V 0.5A',
+  'model' => 'POE-24-24V-0.5A',
+  'sku' => 'POE-24-24V-0.5A',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-network-accessories',
+  'categories' => 
+  array (
+    0 => 'poe-injectors',
+  ),
+  'h1' => 'Ubiquiti PoE Adapter 24V 0.5A',
+  'seo_title' => 'Ubiquiti PoE Adapter 24V 0.5A Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '24V 0.5A 12W passive PoE adapter for powering compatible Ubiquiti devices over Ethernet.',
+  'description' => '<p>Ubiquiti PoE Adapter 24V 0.5A is a 24V passive Power over Ethernet injector for powering compatible Ubiquiti airMAX and UniFi devices in Kenya.</p><p>It delivers 12W over Ethernet where a PoE switch is not available.</p><p>Confirm device compatibility before ordering and check current pricing and stock availability in Kenya.</p>',
+  'key_use' => 'Powering compatible Ubiquiti devices over Ethernet',
+  'key_specifications' => 'Output Voltage: 24V
+Output Current: 0.5A
+Max. Power: 12W
+Type: Passive PoE injector',
+  'technical_specifications' => 'Output Voltage: 24V
+Output Current: 0.5A
+Max. Power: 12W
+Type: Passive PoE injector
+Input: 100-240V AC',
+),
+    array (
+  'slug' => 'ubiquiti-poe-48-48v-05a',
+  'name' => 'Ubiquiti PoE Adapter 48V 0.5A',
+  'model' => 'POE-48-48V-0.5A',
+  'sku' => 'POE-48-48V-0.5A',
+  'brand' => 'Ubiquiti',
+  'category' => 'ubiquiti-network-accessories',
+  'categories' => 
+  array (
+    0 => 'poe-injectors',
+  ),
+  'h1' => 'Ubiquiti PoE Adapter 48V 0.5A',
+  'seo_title' => 'Ubiquiti PoE Adapter 48V 0.5A Price in Kenya | Ubiquiti Kenya',
+  'meta_description' => '48V 0.5A 24W PoE adapter with Gigabit LAN port for powering compatible Ubiquiti devices.',
+  'description' => '<p>Ubiquiti PoE Adapter 48V 0.5A is a 48V Power over Ethernet injector with a Gigabit LAN port for powering compatible Ubiquiti devices in Kenya.</p><p>It delivers 24W over Ethernet where a PoE switch is not available.</p><p>Confirm device compatibility before ordering and check current pricing and stock availability in Kenya.</p>',
+  'key_use' => 'Powering compatible Ubiquiti devices over Ethernet',
+  'key_specifications' => 'Output Voltage: 48V
+Output Current: 0.5A
+Max. Power: 24W
+LAN Port: Gigabit
+Type: Passive PoE injector',
+  'technical_specifications' => 'Output Voltage: 48V
+Output Current: 0.5A
+Max. Power: 24W
+LAN Port: Gigabit
+Type: Passive PoE injector
+Input: 100-240V AC',
+),
 ];
