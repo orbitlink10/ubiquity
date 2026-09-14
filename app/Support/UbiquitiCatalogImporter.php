@@ -100,6 +100,10 @@ class UbiquitiCatalogImporter
 
             $existing = Product::where('slug', $slug)->first();
 
+            if (! $existing) {
+                $existing = $this->findExistingBySkuOrModel($data);
+            }
+
             if ($existing) {
                 $existing->update($this->missingFields($existing, $attributes));
                 $product = $existing;
@@ -165,6 +169,30 @@ class UbiquitiCatalogImporter
         ];
 
         return array_filter($attributes, fn ($value): bool => $value !== null);
+    }
+
+    /**
+     * Match a pre-existing product by SKU or model number when the seed slug
+     * does not match, so manually entered products do not collide with the
+     * unique SKU constraint on re-seed.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function findExistingBySkuOrModel(array $data): ?Product
+    {
+        foreach (['sku' => 'sku', 'model' => 'model_number'] as $dataKey => $column) {
+            $value = trim((string) ($data[$dataKey] ?? ''));
+
+            if ($value === '' || ! SeoMetadata::columnReady('products', $column)) {
+                continue;
+            }
+
+            if ($product = Product::where($column, $value)->first()) {
+                return $product;
+            }
+        }
+
+        return null;
     }
 
     /**
