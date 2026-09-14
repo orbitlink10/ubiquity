@@ -1472,7 +1472,9 @@ class AdminController extends Controller
         $payload = [
             'category_id' => $category->id,
             'name' => $data['name'],
-            'slug' => $this->uniqueSlug('products', $data['name'], $product->id),
+            'slug' => $data['name'] === $product->name
+                ? $product->slug
+                : $this->uniqueSlug('products', $data['name'], $product->id),
             'description' => ProductContent::sanitizeRichText($data['description'] ?? null),
             'meta_description' => ProductContent::sanitizeMetaDescription($data['meta_description'] ?? null),
             'price' => $data['price'] ?? null,
