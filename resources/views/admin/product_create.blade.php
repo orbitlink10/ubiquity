@@ -340,6 +340,15 @@
                     </div>
                 </div>
 
+                @if($productOfficialMediaFieldsReady)
+                    <div class="admin-product-field">
+                        <h3>Product video (Optional)</h3>
+                        <label class="admin-product-label" for="official_video_url">YouTube video URL</label>
+                        <input class="admin-product-input" id="official_video_url" type="url" name="official_video_url" value="{{ old('official_video_url', $productToEdit?->official_video_url) }}" maxlength="500" placeholder="https://www.youtube.com/watch?v=..." aria-describedby="product-video-help">
+                        <p class="admin-product-note" id="product-video-help">Paste a YouTube watch, share, Shorts or embed link. The video appears below the description in Product details. Clear the link to remove it.</p>
+                    </div>
+                @endif
+
                 @if($productSeoFieldsReady)
                     <details class="admin-product-optional-panel">
                         <summary>SEO, Specs and FAQs</summary>
@@ -370,8 +379,6 @@
                                 <label class="admin-product-label" for="official_image_url">Official product image URL</label>
                                 <input class="admin-product-input" id="official_image_url" type="url" name="official_image_url" value="{{ old('official_image_url', $productToEdit?->official_image_url) }}" placeholder="https://assets.ecomm.ui.com/...">
 
-                                <label class="admin-product-label" for="official_video_url">Product video URL (YouTube)</label>
-                                <input class="admin-product-input" id="official_video_url" type="url" name="official_video_url" value="{{ old('official_video_url', $productToEdit?->official_video_url) }}" placeholder="https://www.youtube.com/watch?v=...">
                                 <p class="admin-product-note">Use HTTPS Ubiquiti-hosted image URLs when adding official product media manually.</p>
                             @endif
 
