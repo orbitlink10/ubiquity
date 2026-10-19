@@ -634,7 +634,7 @@ class AdminController extends Controller
                         ->orWhere('sku', 'like', '%'.$search.'%');
                 });
             })
-            ->latest()
+            ->latest()->orderByDesc('id')
             ->paginate(20)
             ->withQueryString();
 

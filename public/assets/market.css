@@ -4093,6 +4093,11 @@ textarea.admin-post-builder-input {
     color: var(--muted);
 }
 
+.admin-pagination {
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
 .footer {
     margin-top: 30px;
     border-top: 1px solid var(--line);

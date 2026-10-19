@@ -76,6 +76,7 @@
                     </tbody>
                 </table>
             </div>
+            @include('admin.partials.pagination', ['paginator' => $products, 'label' => 'Products'])
         </section>
     </div>
 </div>

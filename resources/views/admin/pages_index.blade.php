@@ -92,21 +92,7 @@
                 </table>
             </div>
 
-            @if($pages->hasPages())
-                <div class="pager">
-                    @if($pages->onFirstPage())
-                        <span class="pager-link disabled">Previous</span>
-                    @else
-                        <a class="pager-link" href="{{ $pages->previousPageUrl() }}">Previous</a>
-                    @endif
-                    <span>Page {{ $pages->currentPage() }} of {{ $pages->lastPage() }}</span>
-                    @if($pages->hasMorePages())
-                        <a class="pager-link" href="{{ $pages->nextPageUrl() }}">Next</a>
-                    @else
-                        <span class="pager-link disabled">Next</span>
-                    @endif
-                </div>
-            @endif
+            @include('admin.partials.pagination', ['paginator' => $pages, 'label' => 'Pages and posts'])
         </section>
     </div>
 </div>
