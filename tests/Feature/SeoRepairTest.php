@@ -83,9 +83,9 @@ class SeoRepairTest extends TestCase
     public function test_verified_business_details_replace_outdated_homepage_contact_values(): void
     {
         $homepage = HomepageContent::current();
-        $homepage->fill(['contact_phone' => '0714804532', 'contact_email' => 'old@example.test'])->save();
+        $homepage->fill(['contact_phone' => '+254729299439', 'contact_email' => 'old@example.test'])->save();
         $response = $this->get('/contact-us')->assertOk();
-        $response->assertSee('+254729299439')->assertSee('info@ubiquityunifikenya.co.ke');
+        $response->assertSee('0714804532')->assertSee('info@ubiquityunifikenya.co.ke');
         $response->assertSee('Kimathi Street, Lyrics House')->assertSee('8 AM - 5 PM');
         $response->assertSee('Ubiquiti Unifi Kenya');
         $response->assertDontSee('old@example.test');

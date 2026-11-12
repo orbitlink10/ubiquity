@@ -3,7 +3,7 @@
 return [
     'name' => env('BUSINESS_NAME', 'Ubiquiti UniFi Kenya'),
     'legal_name' => env('BUSINESS_LEGAL_NAME') ?: 'Ubiquiti Unifi Kenya',
-    'phone' => env('BUSINESS_PHONE') ?: '+254729299439',
+    'phone' => env('BUSINESS_PHONE') ?: '0714804532',
     'whatsapp' => env('BUSINESS_WHATSAPP', env('BUSINESS_PHONE')),
     'email' => env('BUSINESS_EMAIL') ?: 'info@ubiquityunifikenya.co.ke',
     'address' => env('BUSINESS_ADDRESS') ?: 'Kimathi Street, Lyrics House',
