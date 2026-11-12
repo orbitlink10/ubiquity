@@ -415,6 +415,65 @@ button.danger {
     line-height: 1.7;
 }
 
+.catalog-filter-panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: grid;
+    gap: 14px;
+}
+
+.catalog-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px 14px;
+}
+
+.catalog-filter-field {
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.catalog-filter-field select,
+.catalog-filter-field input {
+    min-height: 42px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    font-size: 14px;
+    background: #fff;
+}
+
+.catalog-filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.catalog-filter-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: var(--brand-orange);
+    color: #fff;
+    font-weight: 700;
+}
+
+.catalog-filter-reset {
+    color: var(--muted);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

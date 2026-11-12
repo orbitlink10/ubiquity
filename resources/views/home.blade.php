@@ -97,6 +97,8 @@ SVG,
 @endif
 @if($search !== '')
     @section('robots', 'noindex,follow')
+@elseif($currentCategory && ($hasCatalogFilters || $products->total() === 0))
+    @section('robots', 'noindex,follow')
 @elseif($currentCategory && \App\Support\SeoMetadata::robots($currentCategory))
     @section('robots', \App\Support\SeoMetadata::robots($currentCategory))
 @endif
@@ -161,14 +163,124 @@ SVG,
                 @endif
 
                 <div class="category-content-body">
-                    <p class="catalog-search-eyebrow">{{ $currentCategory->parent?->name ?? 'Category' }}</p>
-                    <h1>{{ $currentCategory->name }}</h1>
+                    <p class="catalog-search-eyebrow">{{ $currentCategory->parent ? \App\Support\UbiquitiSeoCatalog::navLabel($currentCategory->parent) : 'Category' }}</p>
+                    <h1>{{ \App\Support\SeoMetadata::heading($currentCategory, $currentCategory->name) }}</h1>
 
                     @if($categorySummary)
                         <p class="category-content-summary">{{ $categorySummary }}</p>
                     @endif
                 </div>
             </section>
+
+            <form class="catalog-filter-panel" method="get" action="{{ route('category.show', $currentCategory) }}">
+                @if($search !== '')
+                    <input type="hidden" name="search" value="{{ $search }}">
+                @endif
+
+                <div class="catalog-filter-grid">
+                    @if($catalogFilterOptions['wifi'] !== [])
+                        <label class="catalog-filter-field">
+                            <span>Wi-Fi generation</span>
+                            <select name="wifi">
+                                <option value="">All Wi-Fi generations</option>
+                                @foreach($catalogFilterOptions['wifi'] as $value => $label)
+                                    <option value="{{ $value }}" @selected($catalogFilters['wifi'] === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                    @endif
+
+                    @if($catalogFilterOptions['poe'] !== [])
+                        <label class="catalog-filter-field">
+                            <span>PoE standard</span>
+                            <select name="poe">
+                                <option value="">All PoE standards</option>
+                                @foreach($catalogFilterOptions['poe'] as $value => $label)
+                                    <option value="{{ $value }}" @selected($catalogFilters['poe'] === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                    @endif
+
+                    @if($catalogFilterOptions['line'] !== [])
+                        <label class="catalog-filter-field">
+                            <span>Product line</span>
+                            <select name="line">
+                                <option value="">All product lines</option>
+                                @foreach($catalogFilterOptions['line'] as $value => $label)
+                                    <option value="{{ $value }}" @selected($catalogFilters['line'] === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                    @endif
+
+                    @if($catalogFilterOptions['link'] !== [])
+                        <label class="catalog-filter-field">
+                            <span>Link type</span>
+                            <select name="link">
+                                <option value="">All link types</option>
+                                @foreach($catalogFilterOptions['link'] as $value => $label)
+                                    <option value="{{ $value }}" @selected($catalogFilters['link'] === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                    @endif
+
+                    <label class="catalog-filter-field">
+                        <span>Availability</span>
+                        <select name="availability">
+                            <option value="">All availability</option>
+                            <option value="in_stock" @selected($catalogFilters['availability'] === 'in_stock')>In stock</option>
+                            <option value="out_of_stock" @selected($catalogFilters['availability'] === 'out_of_stock')>Out of stock</option>
+                        </select>
+                    </label>
+
+                    @if(count($filterOptions['brands']) > 1)
+                        <label class="catalog-filter-field">
+                            <span>Brand</span>
+                            <select name="brand">
+                                <option value="">All brands</option>
+                                @foreach($filterOptions['brands'] as $brand)
+                                    <option value="{{ $brand }}" @selected($catalogFilters['brand'] === $brand)>{{ $brand }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                    @endif
+
+                    <label class="catalog-filter-field">
+                        <span>Min price (KES)</span>
+                        <input type="number" name="price_min" min="0" step="1" value="{{ $catalogFilters['price_min'] }}" inputmode="numeric">
+                    </label>
+
+                    <label class="catalog-filter-field">
+                        <span>Max price (KES)</span>
+                        <input type="number" name="price_max" min="0" step="1" value="{{ $catalogFilters['price_max'] }}" inputmode="numeric">
+                    </label>
+
+                    <label class="catalog-filter-field">
+                        <span>Sort by</span>
+                        <select name="sort">
+                            <option value="latest" @selected($catalogFilters['sort'] === 'latest')>Latest</option>
+                            <option value="name_asc" @selected($catalogFilters['sort'] === 'name_asc')>Name A-Z</option>
+                            <option value="price_asc" @selected($catalogFilters['sort'] === 'price_asc')>Price low to high</option>
+                            <option value="price_desc" @selected($catalogFilters['sort'] === 'price_desc')>Price high to low</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="catalog-filter-actions">
+                    <button type="submit" class="catalog-filter-submit">Apply filters</button>
+                    <a class="catalog-filter-reset" href="{{ route('category.show', $currentCategory) }}">Reset filters</a>
+                </div>
+            </form>
+
+            @if($currentCategoryChildren->isNotEmpty())
+                <nav class="category-hub-links" aria-label="{{ $currentCategory->name }} subcategories">
+                    @foreach($currentCategoryChildren as $childCategory)
+                        <a href="{{ route('category.show', $childCategory) }}">{{ \App\Support\UbiquitiSeoCatalog::navLabel($childCategory) }}</a>
+                    @endforeach
+                </nav>
+            @endif
         @else
             <div
                 class="hero-banner"

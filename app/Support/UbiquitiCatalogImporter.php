@@ -45,7 +45,8 @@ class UbiquitiCatalogImporter
             $category = Category::where('slug', $slug)->first();
 
             if ($category) {
-                $category->update($payload);
+                // Existing categories may have been reorganized or edited in the
+                // admin area. Do not move or overwrite them from the base seed.
                 $updated++;
             } else {
                 $category = Category::create($payload);
@@ -76,6 +77,7 @@ class UbiquitiCatalogImporter
             if ($slug === null || $slug === '') {
                 $skipped++;
                 $report[] = ['product' => $data['name'] ?? '(unknown)', 'status' => 'skipped', 'reason' => 'Missing slug'];
+
                 continue;
             }
 
@@ -83,6 +85,7 @@ class UbiquitiCatalogImporter
             if (! $primary) {
                 $skipped++;
                 $report[] = ['product' => $data['name'], 'status' => 'skipped', 'reason' => 'Primary category missing: '.($data['category'] ?? '')];
+
                 continue;
             }
 
@@ -120,6 +123,15 @@ class UbiquitiCatalogImporter
             }
 
             if (Product::categoryAssignmentsReady()) {
+                // Preserve additional category assignments made by the store
+                // owner or by the category tree seeder.
+                $categoryIds = $product->categories()
+                    ->pluck('categories.id')
+                    ->merge($categoryIds)
+                    ->unique()
+                    ->values()
+                    ->all();
+
                 $product->categories()->sync($categoryIds);
             }
 
@@ -213,6 +225,7 @@ class UbiquitiCatalogImporter
                 if (empty($current)) {
                     $updates[$field] = $value;
                 }
+
                 continue;
             }
 

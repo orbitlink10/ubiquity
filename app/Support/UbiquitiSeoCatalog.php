@@ -207,6 +207,157 @@ class UbiquitiSeoCatalog
     }
 
     /**
+     * The public category taxonomy for the new storefront. Menu labels are short;
+     * the h1 field is used for the category page heading.
+     *
+     * @return array<string, array{name: string, h1: string, seo_title: string, focus_keyword: string, meta_description: string, intro: string, description: string, seo_content: string, faq_items: array<int, array{question: string, answer: string}>}>
+     */
+    public static function mainCategories(): array
+    {
+        return [
+            'ubiquiti-access-points' => [
+                'name' => 'Wi-Fi Access Points',
+                'h1' => 'Ubiquiti Wi-Fi Access Points in Kenya',
+                'seo_title' => 'Ubiquiti Wi-Fi Access Points in Kenya | UniFi APs',
+                'focus_keyword' => 'Ubiquiti Wi-Fi Access Points Kenya',
+                'meta_description' => 'Compare Ubiquiti UniFi Wi-Fi 6, Wi-Fi 6E and Wi-Fi 7 access points in Kenya by indoor, outdoor and in-wall mounting, coverage and PoE needs.',
+                'intro' => 'Browse Ubiquiti UniFi access points for homes, offices, hotels, schools and managed wireless networks in Kenya. Compare indoor, outdoor and in-wall models by Wi-Fi generation, coverage and power requirements.',
+                'description' => '<p>Ubiquiti UniFi access points provide centrally managed Wi-Fi for homes, offices, hospitality, education and enterprise networks. This category covers ceiling-mount, wall-mount, in-wall and outdoor models listed in the Kenyan catalogue.</p>',
+                'seo_content' => '<h2>How to choose a UniFi access point in Kenya</h2><p>Start with the wireless standard, then match the model to the installation location and the expected number of connected users. UniFi Wi-Fi 6 and Wi-Fi 6E access points suit many current client devices, while Wi-Fi 7 models provide newer radio capabilities for buyers planning ahead.</p><h3>Indoor, outdoor and in-wall installation</h3><p>Indoor ceiling access points are commonly used in offices, homes, hotels and classrooms. Outdoor models are built for weather-exposed locations, and in-wall units fit a wall network position. Confirm mounting, cabling and power availability before ordering.</p><h3>Coverage, Wi-Fi generation and PoE</h3><p>Use the Wi-Fi generation and PoE filters to narrow the listings to verified product data. Coverage figures and power methods differ by model, so compare the product specifications rather than relying on the category label alone.</p>',
+                'faq_items' => [
+                    ['question' => 'Which Ubiquiti access point is best for a Kenyan office?', 'answer' => 'Choose by coverage area, user density, Wi-Fi generation, mounting position and PoE requirements. Compare the specifications of each UniFi model for the specific office layout.'],
+                    ['question' => 'Do Ubiquiti UniFi access points need PoE?', 'answer' => 'Many UniFi access points are powered over Ethernet. Check the exact power method and PoE class listed for the model before planning the switch or injector.'],
+                ],
+            ],
+            'ubiquiti-switches' => [
+                'name' => 'Network Switches',
+                'h1' => 'Ubiquiti UniFi Network Switches in Kenya',
+                'seo_title' => 'Ubiquiti UniFi Network Switches in Kenya | PoE & Non-PoE',
+                'focus_keyword' => 'Ubiquiti UniFi Network Switches Kenya',
+                'meta_description' => 'Compare UniFi PoE and non-PoE network switches in Kenya by port count, desktop or rackmount format, PoE output, multi-gigabit ports and SFP+ uplinks.',
+                'intro' => 'Find Ubiquiti UniFi network switches for access points, cameras, office LANs, server rooms and larger campus networks in Kenya. Compare PoE and non-PoE models by port count, form factor and uplink options.',
+                'description' => '<p>Ubiquiti UniFi switches connect wired devices and can also power compatible access points, cameras and other equipment over Ethernet. This category covers PoE, non-PoE, desktop, rackmount and aggregation switch options listed in the catalogue.</p>',
+                'seo_content' => '<h2>Choosing a UniFi network switch in Kenya</h2><p>Begin with the number of wired devices and the number of ports that need PoE. Then check whether the installation calls for a compact desktop switch, a rackmount unit, a multi-gigabit model or an aggregation switch with high-speed uplinks.</p><h3>PoE and non-PoE switches</h3><p>PoE switches deliver power and data over Ethernet, which simplifies access point and camera installations. Non-PoE switches are intended for devices with their own power supply. Confirm the PoE budget and supported power class before connecting powered equipment.</p><h3>Port count, format and uplinks</h3><p>UniFi switch families differ in port count, port speed, SFP or SFP+ uplinks and rack or desktop mounting. Compare the technical specifications for the exact model instead of assuming that similarly named switches share the same capabilities.</p>',
+                'faq_items' => [
+                    ['question' => 'Which Ubiquiti switch is best for access points?', 'answer' => 'Choose a PoE switch with enough powered ports and a PoE budget that covers the access points you plan to install. Verify the power method of each access point model.'],
+                    ['question' => 'Do I need a rackmount UniFi switch?', 'answer' => 'Choose rackmount when the network is installed in a standard equipment rack. Desktop and wall-friendly models may suit smaller installations with limited rack space.'],
+                ],
+            ],
+            'ubiquiti-routers' => [
+                'name' => 'Routers & Gateways',
+                'h1' => 'Ubiquiti UniFi Routers & Gateways in Kenya',
+                'seo_title' => 'Ubiquiti UniFi Routers & Gateways in Kenya | Cloud Gateway',
+                'focus_keyword' => 'Ubiquiti UniFi Routers and Gateways Kenya',
+                'meta_description' => 'Compare Ubiquiti UniFi Cloud Gateways and Dream Machine models in Kenya by throughput, ports, storage, VPN and network management requirements.',
+                'intro' => 'Compare Ubiquiti UniFi routers and gateways for homes, offices, branches and business networks in Kenya. Browse Cloud Gateway and Dream Machine models by port layout, storage and management requirements.',
+                'description' => '<p>Ubiquiti UniFi gateways combine routing with UniFi network management, while Dream Machine models add different port, storage and application capabilities. This category covers the Cloud Gateways, Dream Machines and standalone UniFi gateways listed in the catalogue.</p>',
+                'seo_content' => '<h2>Cloud Gateway or Dream Machine?</h2><p>Cloud Gateways are compact UniFi routing and management devices for many home and office networks. Dream Machine models generally provide a different combination of ports, storage and rack or desktop installation options. Choose by the features the network needs rather than by name alone.</p><h3>Match the gateway to the internet connection</h3><p>Check WAN and LAN port speeds, the number of ports, VPN requirements and the number of UniFi devices that will be managed. For a business network, also confirm whether rack mounting, redundant power or built-in storage is required.</p><h3>UniFi management and compatibility</h3><p>Review the management application support and software capabilities listed for each model. Specifications and available features can differ between gateway families, so confirm them on the product page before purchase.</p>',
+                'faq_items' => [
+                    ['question' => 'What is the difference between a Cloud Gateway and a Dream Machine?', 'answer' => 'Both are UniFi gateway families, but they differ in port layout, storage, form factor and application support. Compare the exact model specifications for the network design.'],
+                    ['question' => 'Can a UniFi gateway manage access points and switches?', 'answer' => 'Compatible UniFi gateways can run UniFi network management for supported devices. Confirm the managed device requirements for the specific gateway model.'],
+                ],
+            ],
+            'network-controllers' => [
+                'name' => 'Network Controllers',
+                'h1' => 'Ubiquiti UniFi Network Controllers in Kenya',
+                'seo_title' => 'Ubiquiti UniFi Network Controllers in Kenya | CloudKey',
+                'focus_keyword' => 'Ubiquiti UniFi Network Controllers Kenya',
+                'meta_description' => 'Compare Ubiquiti UniFi CloudKey and standalone network management consoles in Kenya for hosting UniFi Network and compatible applications.',
+                'intro' => 'Find Ubiquiti UniFi network controllers for deployments that use a dedicated management appliance. This category covers CloudKey devices and standalone UniFi management consoles listed in the catalogue.',
+                'description' => '<p>UniFi network controllers host the management application used to configure and monitor compatible UniFi devices. Dedicated controller hardware can be useful when management is kept separate from the gateway.</p>',
+                'seo_content' => '<h2>Dedicated UniFi controller hardware</h2><p>A CloudKey or standalone console can host UniFi Network management without relying on a gateway with built-in management. Check application support, storage, managed device capacity and power requirements before choosing a controller.</p><h3>Controller or gateway with built-in management?</h3><p>Some UniFi gateways already provide management for the network. Choose a separate controller when the design calls for dedicated hardware or additional application hosting. Confirm compatibility with the UniFi devices in the deployment.</p>',
+                'faq_items' => [
+                    ['question' => 'When should I use a dedicated UniFi controller?', 'answer' => 'Use one when the network design requires separate management hardware or when the selected gateway does not provide the required management capabilities. Confirm application and device support first.'],
+                ],
+            ],
+            'wireless-bridges-wisp' => [
+                'name' => 'Wireless Bridges & WISP',
+                'h1' => 'Ubiquiti Wireless Bridges & WISP Equipment in Kenya',
+                'seo_title' => 'Ubiquiti Wireless Bridges & WISP in Kenya',
+                'focus_keyword' => 'Ubiquiti Wireless Bridges and WISP Kenya',
+                'meta_description' => 'Compare Ubiquiti airMAX, airFiber, Wave and UniFi Building Bridge equipment in Kenya for point-to-point links and wireless ISP networks.',
+                'intro' => 'Browse Ubiquiti wireless bridge and WISP equipment for outdoor links, ISP backhaul and point-to-multipoint coverage in Kenya. Compare airMAX, airFiber, Wave and UniFi Building Bridge products by link type and product line.',
+                'description' => '<p>Ubiquiti wireless bridges connect buildings, towers and remote sites without a physical cable. This category covers airMAX, airFiber, Wave and UniFi Building Bridge equipment listed in the catalogue, together with compatible outdoor antennas.</p>',
+                'seo_content' => '<h2>Point-to-point and point-to-multipoint links</h2><p>Point-to-point links connect two locations with a dedicated wireless path. Point-to-multipoint networks connect multiple subscriber or client locations to a central access point. Use the link-type filters to compare products assigned to each design.</p><h3>airMAX, airFiber, Wave and UniFi Building Bridge</h3><p>The catalogue currently lists airMAX and airFiber radios and antennas. Wave and UniFi Building Bridge products are included in the category scope when they are present in the catalogue. Product-line filters make it easier to compare radios within the same family.</p><h3>Plan the wireless link before ordering</h3><p>Confirm distance, clear line of sight, mounting height, power availability, frequency planning and expected throughput. These factors affect which radio and antenna combination is suitable for a given site.</p>',
+                'faq_items' => [
+                    ['question' => 'What is the difference between point-to-point and point-to-multipoint?', 'answer' => 'A point-to-point link connects two locations, while a point-to-multipoint network connects several locations to a central access point. The required radios and antennas depend on the design.'],
+                    ['question' => 'Do Ubiquiti wireless bridges need line of sight?', 'answer' => 'Outdoor wireless links generally require a clear path between antennas. Confirm line of sight, distance and local spectrum conditions during site planning.'],
+                ],
+            ],
+            'fiber-sfp-modules' => [
+                'name' => 'Fiber & SFP Modules',
+                'h1' => 'Ubiquiti Fiber Equipment & SFP Modules in Kenya',
+                'seo_title' => 'Ubiquiti Fiber & SFP Modules in Kenya',
+                'focus_keyword' => 'Ubiquiti Fiber Equipment and SFP Modules Kenya',
+                'meta_description' => 'Compare Ubiquiti SFP, SFP+ and QSFP modules, DAC cables and UISP Fiber equipment in Kenya for switch, router and ISP fibre links.',
+                'intro' => 'Find Ubiquiti fibre equipment and optical modules for switch uplinks, router connections and ISP networks in Kenya. Compare SFP, SFP+ and QSFP modules, DAC cables and UISP Fiber products listed in the catalogue.',
+                'description' => '<p>Ubiquiti fibre products support optical uplinks, backbone connections and service-provider deployments. This category covers SFP, SFP+ and QSFP modules, DAC cables and UISP Fiber equipment listed in the catalogue.</p>',
+                'seo_content' => '<h2>Choosing Ubiquiti fibre modules and cables</h2><p>Match the module to the port on both ends of the link, then confirm the optical standard, connector type, cable type and supported distance. A module that fits mechanically may still be unsuitable if its speed or optical specification does not match the equipment.</p><h3>SFP, SFP+ and QSFP</h3><p>SFP, SFP+ and QSFP formats support different speeds and port types. Check the device datasheet before selecting a module or DAC cable. For UISP Fiber equipment, confirm compatibility with the planned ISP network and management platform.</p>',
+                'faq_items' => [
+                    ['question' => 'How do I choose the right SFP module?', 'answer' => 'Confirm the port speed and format, fibre type, connector, optical reach and compatibility with the device at both ends of the link.'],
+                ],
+            ],
+            'ubiquiti-network-accessories' => [
+                'name' => 'PoE & Accessories',
+                'h1' => 'Ubiquiti PoE Injectors & Network Accessories in Kenya',
+                'seo_title' => 'Ubiquiti PoE Injectors & Accessories in Kenya',
+                'focus_keyword' => 'Ubiquiti PoE Injectors and Accessories Kenya',
+                'meta_description' => 'Shop Ubiquiti PoE injectors, power supplies, mounts, surge protectors and Ethernet accessories in Kenya for access points, radios and switches.',
+                'intro' => 'Find Ubiquiti PoE injectors and network accessories for powering, mounting and protecting access points, radios, switches and other networking equipment in Kenya. Compare power methods, mounting options and accessory compatibility.',
+                'description' => '<p>Ubiquiti PoE injectors and network accessories support installations where power, mounting or surge protection is needed alongside the main networking equipment. This category covers PoE injectors, power supplies, mounts, surge protectors and Ethernet accessories listed in the catalogue.</p>',
+                'seo_content' => '<h2>PoE injectors and network accessories</h2><p>A PoE injector can power a compatible device when a PoE switch is not available. Check the voltage, power rating and PoE method required by the device before choosing an injector. Mounts, surge protectors and Ethernet accessories should match the enclosure, cable and installation environment.</p><h3>Injector or PoE switch?</h3><p>Use a PoE switch when several devices need power and data from a central location. A single injector may suit one access point or radio. Confirm the power method and maximum consumption of the device before ordering.</p>',
+                'faq_items' => [
+                    ['question' => 'How do I choose a Ubiquiti PoE injector?', 'answer' => 'Match the injector voltage, power rating and PoE method to the device specifications. Confirm the connector type and power requirements before purchase.'],
+                    ['question' => 'Can I use any PoE injector with a UniFi access point?', 'answer' => 'No. Use an injector that matches the voltage and PoE method required by the specific access point model.'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Short labels used in the storefront navigation, keyed by category slug.
+     *
+     * @return array<string, string>
+     */
+    public static function navLabels(): array
+    {
+        return [
+            'ubiquiti-access-points' => 'Wi-Fi Access Points',
+            'ubiquiti-switches' => 'Network Switches',
+            'ubiquiti-routers' => 'Routers & Gateways',
+            'ubiquiti-cloud-gateways' => 'Cloud Gateways',
+            'network-controllers' => 'Network Controllers',
+            'wireless-bridges-wisp' => 'Wireless Bridges & WISP',
+            'fiber-sfp-modules' => 'Fiber & SFP Modules',
+            'ubiquiti-network-accessories' => 'PoE & Accessories',
+            'ubiquiti-airmax' => 'airMAX',
+            'ubiquiti-airfiber' => 'airFiber',
+            'ubiquiti-point-to-point' => 'Point-to-Point',
+            'point-to-multipoint' => 'Point-to-Multipoint',
+            'ubiquiti-antennas' => 'Antennas',
+            'poe-injectors' => 'PoE Injectors',
+            'wifi-7-access-points' => 'Wi-Fi 7',
+            'wifi-6-access-points' => 'Wi-Fi 6',
+            'wifi-6e-access-points' => 'Wi-Fi 6E',
+            'in-wall-access-points' => 'In-Wall',
+            'indoor-access-points' => 'Indoor',
+            'outdoor-access-points' => 'Outdoor',
+            'desktop-switches' => 'Desktop',
+            'rackmount-switches' => 'Rackmount',
+            'dream-machines' => 'Dream Machines',
+            'cloudkeys' => 'CloudKeys',
+        ];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function mainCategorySlugs(): array
+    {
+        return array_keys(self::mainCategories());
+    }
+
+    /**
      * @return array<string, array<int, string>>
      */
     public static function subcategories(): array
@@ -364,6 +515,10 @@ class UbiquitiSeoCatalog
     {
         $slug = Str::slug($category->slug);
 
+        if ($mapped = self::navLabels()[$slug] ?? null) {
+            return $mapped;
+        }
+
         if ($mapped = self::primaryCategories()[$slug]['name'] ?? null) {
             return $mapped;
         }
@@ -393,11 +548,15 @@ class UbiquitiSeoCatalog
             'ubiquity-cameras' => 'ubiquiti-cameras',
             'ubiquity-nvr' => 'ubiquiti-nvr',
             'ubiquity-access-control' => 'ubiquiti-access-control',
-            'ubiquity-cloud-key' => 'ubiquiti-cloud-key',
-            'ubiquity-poe-injectors' => 'ubiquiti-poe-injectors',
+            'ubiquity-cloud-key' => 'network-controllers',
+            'ubiquity-poe-injectors' => 'poe-injectors',
             'ubiquity-antennas' => 'ubiquiti-antennas',
-            'ubiquity-accessories' => 'ubiquiti-accessories',
-            'ubiquity-fiber' => 'ubiquiti-fiber',
+            'ubiquity-accessories' => 'ubiquiti-network-accessories',
+            'ubiquity-fiber' => 'fiber-sfp-modules',
+            'ubiquiti-cloud-key' => 'network-controllers',
+            'ubiquiti-poe-injectors' => 'poe-injectors',
+            'ubiquiti-accessories' => 'ubiquiti-network-accessories',
+            'ubiquiti-fiber' => 'fiber-sfp-modules',
             'unifi-access-points' => 'ubiquiti-access-points',
             'unifi-switches' => 'ubiquiti-switches',
             'unifi-gateways' => 'ubiquiti-cloud-gateways',
@@ -418,6 +577,7 @@ class UbiquitiSeoCatalog
     public static function topLevelCategoryRedirects(): array
     {
         return array_merge(
+            array_combine(self::mainCategorySlugs(), self::mainCategorySlugs()),
             array_combine(array_keys(self::primaryCategories()), array_keys(self::primaryCategories())),
             self::legacyCategoryRedirects()
         );

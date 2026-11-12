@@ -7,6 +7,7 @@ use App\Models\Page;
 use App\Models\Product;
 use App\Support\CanonicalUrl;
 use App\Support\SeoMetadata;
+use App\Support\StorefrontCategories;
 use App\Support\UbiquitiSeoCatalog;
 use Illuminate\Http\Response;
 
@@ -17,16 +18,12 @@ class SitemapController extends Controller
         $urls = collect([
             [
                 'loc' => CanonicalUrl::route('home'),
-                'lastmod' => now()->toDateString(),
+                'lastmod' => null,
                 'priority' => '1.0',
             ],
         ]);
 
-        $categoryUrls = Category::query()
-            ->whereNotIn('slug', array_keys(UbiquitiSeoCatalog::legacyCategoryRedirects()))
-            ->when(SeoMetadata::columnReady('categories', 'robots'), fn ($query) => $query->where(fn ($robotsQuery) => $robotsQuery->whereNull('robots')->orWhere('robots', 'not like', 'noindex%')))
-            ->orderBy('updated_at', 'desc')
-            ->get()
+        $categoryUrls = StorefrontCategories::sitemap()
             ->map(fn (Category $category): array => [
                 'loc' => CanonicalUrl::route('category.show', $category),
                 'lastmod' => optional($category->updated_at)->toDateString(),
@@ -45,11 +42,12 @@ class SitemapController extends Controller
             ]);
 
         $pageUrls = Page::query()
+            ->when(Page::publicationFieldsReady(), fn ($query) => $query->where('status', 'published'))
             ->when(SeoMetadata::columnReady('pages', 'robots'), fn ($query) => $query->where(fn ($robotsQuery) => $robotsQuery->whereNull('robots')->orWhere('robots', 'not like', 'noindex%')))
             ->orderBy('updated_at', 'desc')
             ->get()
             ->map(fn (Page $page): array => [
-                'loc' => CanonicalUrl::route('pages.show', $page),
+                'loc' => CanonicalUrl::route($page->type === 'post' ? 'blog.show' : 'pages.show', $page),
                 'lastmod' => optional($page->updated_at)->toDateString(),
                 'priority' => '0.6',
             ]);
@@ -73,7 +71,7 @@ class SitemapController extends Controller
 
         $urls = $urls->merge($categoryUrls)->merge($productUrls)->merge($pageUrls)->merge($comparisonUrls);
 
-        $xml = view('sitemap', ['urls' => $urls])->render();
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n".view('sitemap', ['urls' => $urls->unique('loc')])->render();
 
         return response($xml, 200)->header('Content-Type', 'application/xml');
     }

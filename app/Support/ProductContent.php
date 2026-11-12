@@ -191,6 +191,11 @@ class ProductContent
         }
 
         self::sanitizeChildren($element);
+
+        if (in_array($tag, ['h2', 'h3'], true)
+            && trim(str_replace(["\xc2\xa0", "\xe2\x80\x8b"], '', $element->textContent)) === '') {
+            $element->parentNode?->removeChild($element);
+        }
     }
 
     private static function unwrapElement(DOMElement $element): void

@@ -4,7 +4,7 @@
     $productImageFallback = \App\Support\ProductImageCatalog::placeholderUrl();
     $uploadedProductImage = \App\Support\ProductImageCatalog::uploadedUrlFor($product->name, $product->slug);
     $officialProductImage = \App\Support\ProductImageCatalog::officialUrls($product)[0] ?? null;
-    $descriptionHtml = \App\Support\ProductContent::sanitizeRichText($product->description)
+    $descriptionHtml = \App\Support\CatalogContent::render($product->description)
         ?: '<p>No description available.</p>';
     $productMetaDescription = $product->meta_description
         ?: \App\Support\ProductContent::excerpt($product->description, 160);

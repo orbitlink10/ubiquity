@@ -1,14 +1,15 @@
 @extends('layouts.app')
 
 @php
+    $homepageBrandContent = \App\Models\HomepageContent::current();
     $title = $trustPage['title'] . ' | ' . config('app.name', 'Ubiquiti UniFi Kenya');
     $description = \Illuminate\Support\Str::limit($trustPage['summary'], 155, '');
     $businessFields = array_filter([
         'Business name' => config('business.name'),
         'Legal name' => config('business.legal_name'),
-        'Phone' => config('business.phone'),
-        'WhatsApp' => config('business.whatsapp'),
-        'Email' => config('business.email'),
+        'Phone' => $homepageBrandContent->contactPhone(),
+        'WhatsApp' => $homepageBrandContent->contactWhatsApp(),
+        'Email' => $homepageBrandContent->contactEmail(),
         'Address' => config('business.address'),
         'Business hours' => config('business.hours'),
         'Delivery coverage' => config('business.delivery_coverage'),
@@ -48,7 +49,15 @@
                     @if($value !== '')
                         <div>
                             <dt>{{ $label }}</dt>
-                            <dd>{{ $value }}</dd>
+                            <dd>
+                                @if($label === 'Phone')
+                                    <a href="tel:{{ preg_replace('/[^\d+]/', '', $value) }}">{{ $value }}</a>
+                                @elseif($label === 'Email')
+                                    <a href="mailto:{{ $value }}">{{ $value }}</a>
+                                @else
+                                    {{ $value }}
+                                @endif
+                            </dd>
                         </div>
                     @endif
                 @endforeach

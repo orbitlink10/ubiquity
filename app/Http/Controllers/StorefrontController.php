@@ -11,11 +11,11 @@ use App\Support\CanonicalUrl;
 use App\Support\ProductContent;
 use App\Support\ProductSeo;
 use App\Support\SeoMetadata;
+use App\Support\StorefrontCategories;
 use App\Support\UbiquitiSeoCatalog;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -178,10 +178,7 @@ class StorefrontController extends Controller
 
     private function renderCatalog(Request $request, ?Category $currentCategory = null): View|RedirectResponse
     {
-        $categories = Category::query()
-            ->whereNull('parent_id')
-            ->orderBy('name')
-            ->get();
+        $categories = StorefrontCategories::menu();
 
         $search = trim((string) $request->query('search', ''));
         $searchSlug = Str::slug($search);
@@ -193,9 +190,15 @@ class StorefrontController extends Controller
             ->active();
 
         $selectedCategory = null;
+        $currentCategoryChildren = collect();
         if ($currentCategory) {
             $currentCategory->loadMissing('children', 'parent');
             $selectedCategory = $currentCategory->parent_id ?: $currentCategory->id;
+            $publishedCategoryIds = StorefrontCategories::publishedIds();
+            $currentCategoryChildren = $currentCategory->children
+                ->whereIn('id', $publishedCategoryIds)
+                ->sortBy('name')
+                ->values();
             $this->constrainProductsToCategory($productsQuery, $currentCategory);
         }
 
@@ -223,23 +226,23 @@ class StorefrontController extends Controller
 
         if ($search !== '') {
             $productsQuery->where(function ($query) use ($search, $searchSlug): void {
-                    $query->where('name', 'like', '%'.$search.'%')
-                        ->orWhere('sku', 'like', '%'.$search.'%')
-                        ->orWhere('description', 'like', '%'.$search.'%')
-                        ->orWhere('meta_description', 'like', '%'.$search.'%')
-                        ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery->where('name', 'like', '%'.$search.'%'))
-                        ->orWhereHas('vendor', fn ($vendorQuery) => $vendorQuery->where('shop_name', 'like', '%'.$search.'%'));
+                $query->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('sku', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%')
+                    ->orWhere('meta_description', 'like', '%'.$search.'%')
+                    ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery->where('name', 'like', '%'.$search.'%'))
+                    ->orWhereHas('vendor', fn ($vendorQuery) => $vendorQuery->where('shop_name', 'like', '%'.$search.'%'));
 
-                    foreach (['model_number', 'brand', 'key_specifications', 'technical_specifications'] as $column) {
-                        if (SeoMetadata::columnReady('products', $column)) {
-                            $query->orWhere($column, 'like', '%'.$search.'%');
-                        }
+                foreach (['model_number', 'brand', 'key_specifications', 'technical_specifications'] as $column) {
+                    if (SeoMetadata::columnReady('products', $column)) {
+                        $query->orWhere($column, 'like', '%'.$search.'%');
                     }
+                }
 
-                    if ($searchSlug !== '') {
-                        $query->orWhere('slug', 'like', '%'.$searchSlug.'%');
-                    }
-                });
+                if ($searchSlug !== '') {
+                    $query->orWhere('slug', 'like', '%'.$searchSlug.'%');
+                }
+            });
         }
 
         $this->applyCatalogFilters($productsQuery, $catalogFilters);
@@ -336,9 +339,11 @@ class StorefrontController extends Controller
             'catalogFilters' => $catalogFilters,
             'hasCatalogFilters' => $hasCatalogFilters,
             'filterOptions' => $this->filterOptions(),
+            'catalogFilterOptions' => $this->catalogFilterOptions($currentCategory),
             'selectedCategory' => $selectedCategory,
             'testimonials' => Testimonial::homepageItems(),
             'currentCategory' => $currentCategory,
+            'currentCategoryChildren' => $currentCategoryChildren,
             'usedCategoryFallback' => $usedCategoryFallback,
             'isRouterAuthorityPage' => $isRouterAuthorityPage,
             'routerPriceTableProducts' => $routerPriceTableProducts,
@@ -401,7 +406,7 @@ class StorefrontController extends Controller
     }
 
     /**
-     * @return array{availability: ?string, brand: ?string, price_min: ?float, price_max: ?float, sort: string}
+     * @return array{availability: ?string, brand: ?string, price_min: ?float, price_max: ?float, sort: string, wifi: ?string, poe: ?string, line: ?string, link: ?string}
      */
     private function catalogFilters(Request $request): array
     {
@@ -411,17 +416,33 @@ class StorefrontController extends Controller
         $sort = $request->query('sort');
         $sort = in_array($sort, ['latest', 'name_asc', 'price_asc', 'price_desc'], true) ? $sort : 'latest';
 
+        $wifi = $request->query('wifi');
+        $wifi = in_array($wifi, ['wifi-7', 'wifi-6', 'wifi-6e'], true) ? $wifi : null;
+
+        $poe = $request->query('poe');
+        $poe = in_array($poe, ['poe', 'poe-plus', 'poe-plus-plus', 'passive-poe'], true) ? $poe : null;
+
+        $line = $request->query('line');
+        $line = in_array($line, ['airmax', 'airfiber', 'wave'], true) ? $line : null;
+
+        $link = $request->query('link');
+        $link = in_array($link, ['point-to-point', 'point-to-multipoint'], true) ? $link : null;
+
         return [
             'availability' => $availability,
             'brand' => $this->cleanFilterText($request->query('brand')),
             'price_min' => $this->cleanFilterNumber($request->query('price_min')),
             'price_max' => $this->cleanFilterNumber($request->query('price_max')),
             'sort' => $sort,
+            'wifi' => $wifi,
+            'poe' => $poe,
+            'line' => $line,
+            'link' => $link,
         ];
     }
 
     /**
-     * @param  array{availability: ?string, brand: ?string, price_min: ?float, price_max: ?float, sort: string}  $filters
+     * @param  array{availability: ?string, brand: ?string, price_min: ?float, price_max: ?float, sort: string, wifi: ?string, poe: ?string, line: ?string, link: ?string}  $filters
      */
     private function hasCatalogFilters(array $filters): bool
     {
@@ -429,11 +450,15 @@ class StorefrontController extends Controller
             || $filters['brand'] !== null
             || $filters['price_min'] !== null
             || $filters['price_max'] !== null
-            || $filters['sort'] !== 'latest';
+            || $filters['sort'] !== 'latest'
+            || $filters['wifi'] !== null
+            || $filters['poe'] !== null
+            || $filters['line'] !== null
+            || $filters['link'] !== null;
     }
 
     /**
-     * @param  array{availability: ?string, brand: ?string, price_min: ?float, price_max: ?float, sort: string}  $filters
+     * @param  array{availability: ?string, brand: ?string, price_min: ?float, price_max: ?float, sort: string, wifi: ?string, poe: ?string, line: ?string, link: ?string}  $filters
      */
     private function applyCatalogFilters(Builder $query, array $filters): void
     {
@@ -453,6 +478,50 @@ class StorefrontController extends Controller
 
         if ($filters['price_max'] !== null) {
             $query->where('price', '<=', $filters['price_max']);
+        }
+
+        if ($filters['wifi'] !== null) {
+            $wifiCategory = [
+                'wifi-7' => 'wifi-7-access-points',
+                'wifi-6' => 'wifi-6-access-points',
+                'wifi-6e' => 'wifi-6e-access-points',
+            ][$filters['wifi']];
+
+            $query->whereHas('categories', fn (Builder $categoryQuery) => $categoryQuery->where('slug', $wifiCategory));
+        }
+
+        if ($filters['poe'] !== null) {
+            match ($filters['poe']) {
+                'poe-plus' => $query
+                    ->where('technical_specifications', 'like', '%PoE%')
+                    ->where('technical_specifications', 'like', '%PoE+%')
+                    ->where('technical_specifications', 'not like', '%PoE++%'),
+                'poe-plus-plus' => $query->where('technical_specifications', 'like', '%PoE++%'),
+                'passive-poe' => $query->where('technical_specifications', 'like', '%Passive PoE%'),
+                default => $query
+                    ->where('technical_specifications', 'like', '%PoE%')
+                    ->where('technical_specifications', 'not like', '%PoE+%')
+                    ->where('technical_specifications', 'not like', '%Passive PoE%'),
+            };
+        }
+
+        if ($filters['line'] !== null) {
+            $lineCategory = [
+                'airmax' => 'ubiquiti-airmax',
+                'airfiber' => 'ubiquiti-airfiber',
+                'wave' => 'wave',
+            ][$filters['line']];
+
+            $query->whereHas('categories', fn (Builder $categoryQuery) => $categoryQuery->where('slug', $lineCategory));
+        }
+
+        if ($filters['link'] !== null) {
+            $linkCategory = [
+                'point-to-point' => 'ubiquiti-point-to-point',
+                'point-to-multipoint' => 'point-to-multipoint',
+            ][$filters['link']];
+
+            $query->whereHas('categories', fn (Builder $categoryQuery) => $categoryQuery->where('slug', $linkCategory));
         }
     }
 
@@ -486,6 +555,77 @@ class StorefrontController extends Controller
         return [
             'brands' => $brands,
         ];
+    }
+
+    /**
+     * @return array{wifi: array<string, string>, poe: array<string, string>, line: array<string, string>, link: array<string, string>}
+     */
+    private function catalogFilterOptions(?Category $category): array
+    {
+        $empty = ['wifi' => [], 'poe' => [], 'line' => [], 'link' => []];
+
+        if (! $category) {
+            return $empty;
+        }
+
+        if ($category->slug === 'ubiquiti-access-points') {
+            return [
+                'wifi' => array_filter([
+                    'wifi-7' => 'Wi-Fi 7',
+                    'wifi-6' => 'Wi-Fi 6',
+                    'wifi-6e' => 'Wi-Fi 6E',
+                ], fn (string $label, string $key): bool => $this->categoryHasActiveProducts($key.'-access-points'), ARRAY_FILTER_USE_BOTH),
+                'poe' => [
+                    'poe' => 'PoE',
+                    'poe-plus' => 'PoE+',
+                    'poe-plus-plus' => 'PoE++',
+                ],
+                'line' => [],
+                'link' => [],
+            ];
+        }
+
+        if ($category->slug === 'wireless-bridges-wisp') {
+            return [
+                'wifi' => [],
+                'poe' => [],
+                'line' => array_filter([
+                    'airmax' => 'airMAX',
+                    'airfiber' => 'airFiber',
+                    'wave' => 'Wave',
+                ], fn (string $label, string $key): bool => $this->categoryHasActiveProducts([
+                    'airmax' => 'ubiquiti-airmax',
+                    'airfiber' => 'ubiquiti-airfiber',
+                    'wave' => 'wave',
+                ][$key]), ARRAY_FILTER_USE_BOTH),
+                'link' => array_filter([
+                    'point-to-point' => 'Point-to-Point',
+                    'point-to-multipoint' => 'Point-to-Multipoint',
+                ], fn (string $label, string $key): bool => $this->categoryHasActiveProducts([
+                    'point-to-point' => 'ubiquiti-point-to-point',
+                    'point-to-multipoint' => 'point-to-multipoint',
+                ][$key]), ARRAY_FILTER_USE_BOTH),
+            ];
+        }
+
+        return $empty;
+    }
+
+    private function categoryHasActiveProducts(string $slug): bool
+    {
+        $category = Category::query()->where('slug', $slug)->first();
+
+        if (! $category) {
+            return false;
+        }
+
+        return Product::query()
+            ->active()
+            ->where(function (Builder $query) use ($category): void {
+                $query->where('category_id', $category->id)
+                    ->orWhereHas('categories', fn (Builder $categoryQuery) => $categoryQuery->where('categories.id', $category->id));
+            })
+            ->exists();
     }
 
     private function constrainProductsToCategory(Builder $query, Category $category): void
@@ -658,7 +798,7 @@ class StorefrontController extends Controller
             'about-us' => [
                 'title' => 'About Us',
                 'heading' => 'About Ubiquiti UniFi Kenya',
-                'summary' => 'Information about the business behind this Ubiquiti UniFi product website can be added from the admin content area.',
+                'summary' => 'Ubiquiti UniFi Kenya is a networking equipment catalogue for buyers in Kenya. Compare access points, switches, gateways and outdoor wireless equipment by price, specifications and stock availability. Contact us for product selection, compatibility questions and quotations.',
             ],
             'contact-us' => [
                 'title' => 'Contact Us',
@@ -673,7 +813,7 @@ class StorefrontController extends Controller
             'returns-policy' => [
                 'title' => 'Returns Policy',
                 'heading' => 'Returns Policy',
-                'summary' => 'Return eligibility depends on product condition, seller terms and the reason for return. Confirm terms before completing high-value orders.',
+                'summary' => 'Our return window is '.config('business.return_window_days', 7).' days. Contact us by phone or email to discuss a return and confirm the return process.',
             ],
             'warranty-policy' => [
                 'title' => 'Warranty Policy',
@@ -703,31 +843,14 @@ class StorefrontController extends Controller
 
     private function featuredCategories()
     {
-        $primarySlugs = array_keys(UbiquitiSeoCatalog::primaryCategories());
-        $featuredSlugs = array_values(array_unique(array_merge($primarySlugs, $this->routerAuthoritySlugs())));
-
-        return Category::query()
-            ->whereIn('slug', $featuredSlugs)
-            ->get()
-            ->sortBy(function (Category $category) use ($primarySlugs): int {
-                $targetSlug = UbiquitiSeoCatalog::targetSlugForLegacy($category->slug) ?: $category->slug;
-                $position = array_search($targetSlug, $primarySlugs, true);
-
-                return $position === false ? 999 : $position;
-            })
-            ->unique(fn (Category $category): string => UbiquitiSeoCatalog::targetSlugForLegacy($category->slug) ?: $category->slug)
-            ->values();
+        return StorefrontCategories::menu();
     }
 
     private function relatedCategories(?Category $currentCategory)
     {
-        $primarySlugs = array_keys(UbiquitiSeoCatalog::primaryCategories());
-
-        return Category::query()
-            ->whereIn('slug', $primarySlugs)
-            ->when($currentCategory, fn ($query) => $query->whereKeyNot($currentCategory->id))
-            ->orderBy('name')
-            ->limit(8)
-            ->get();
+        return StorefrontCategories::menu()
+            ->when($currentCategory, fn ($categories) => $categories->where('id', '!=', $currentCategory->id))
+            ->take(8)
+            ->values();
     }
 }

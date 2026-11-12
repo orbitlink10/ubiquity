@@ -187,8 +187,8 @@ class StructuredData
             $schema['telephone'] = $phone;
         }
 
-        if (config('business.email')) {
-            $schema['email'] = config('business.email');
+        if ($email = $homepageContent?->contactEmail() ?: config('business.email')) {
+            $schema['email'] = $email;
         }
 
         if (config('business.address')) {

@@ -116,7 +116,7 @@ class HomepageContent extends Model
             'why_choose_items' => self::defaultWhyChooseItems(),
             'testimonials_badge' => 'Testimonials',
             'testimonials_title' => 'Customer Feedback',
-            'testimonials_intro' => 'Feedback from customers can be managed from the admin panel when genuine testimonials are available.',
+            'testimonials_intro' => 'Customer experiences with our networking products and support.',
             'testimonial_items' => self::defaultTestimonialItems(),
             'faq_badge' => 'FAQ',
             'faq_title' => 'Ubiquiti UniFi Buying Questions',
@@ -200,7 +200,7 @@ class HomepageContent extends Model
 
     public function contactPhone(): ?string
     {
-        return $this->fallbackNullableText($this->contact_phone, config('business.phone'));
+        return $this->fallbackNullableText(config('business.phone'), $this->contact_phone);
     }
 
     public function contactWhatsApp(): ?string
@@ -210,7 +210,7 @@ class HomepageContent extends Model
 
     public function contactEmail(): ?string
     {
-        return $this->fallbackNullableText($this->contact_email, config('business.email'));
+        return $this->fallbackNullableText(config('business.email'), $this->contact_email);
     }
 
     public function whyChooseTitle(): string
@@ -240,6 +240,10 @@ class HomepageContent extends Model
 
     public function testimonialsIntro(): ?string
     {
+        if ($this->testimonials_intro === 'Feedback from customers can be managed from the admin panel when genuine testimonials are available.') {
+            return static::defaultContent()->testimonials_intro;
+        }
+
         return $this->fallbackNullableText($this->testimonials_intro, static::defaultContent()->testimonials_intro);
     }
 
@@ -287,7 +291,9 @@ class HomepageContent extends Model
     {
         $html = trim((string) $this->content_body);
 
-        return $html !== '' ? $html : (string) static::defaultContent()->content_body;
+        return \App\Support\CatalogContent::render(
+            $html !== '' ? $html : (string) static::defaultContent()->content_body
+        ) ?? '';
     }
 
     /**
@@ -446,7 +452,7 @@ class HomepageContent extends Model
     private static function defaultWhyChooseItems(): array
     {
         return [
-            ['title' => 'Current Catalogue Prices', 'description' => 'Product pages show prices from the store catalogue instead of static SEO copy.'],
+            ['title' => 'Current Catalogue Prices', 'description' => 'Compare current prices and availability on each product page.'],
             ['title' => 'UniFi-Focused Selection', 'description' => 'Browse access points, switches, gateways, cameras, wireless systems and accessories by practical network use.'],
             ['title' => 'Product-Level Details', 'description' => 'Review SKU, stock status, category, use cases and technical guidance before purchase.'],
             ['title' => 'Quotation Friendly', 'description' => 'Business buyers can use product pages as a starting point for larger networking enquiries.'],
@@ -487,7 +493,7 @@ class HomepageContent extends Model
         return [
             [
                 'question' => 'Are prices on the website current?',
-                'answer' => 'Product prices are generated from the store catalogue and should update when the admin changes a product price.',
+                'answer' => 'Product pages display current catalogue prices. Confirm pricing and stock when requesting a quotation.',
             ],
             [
                 'question' => 'Can I compare Ubiquiti UniFi products before buying?',
@@ -499,7 +505,7 @@ class HomepageContent extends Model
             ],
             [
                 'question' => 'Can businesses request quotations?',
-                'answer' => 'Business quotation availability should be confirmed through the contact details configured by the site owner.',
+                'answer' => 'Contact us with your required models and quantities to request a business quotation.',
             ],
         ];
     }

@@ -4,6 +4,8 @@ namespace App\Support;
 
 class CanonicalUrl
 {
+    public const PRODUCTION_URL = 'https://ubiquitiunifikenya.co.ke';
+
     /**
      * @param  array<string, mixed>  $query
      */
@@ -29,6 +31,10 @@ class CanonicalUrl
         $parts = parse_url($url);
 
         if ($parts !== false && isset($parts['host'])) {
+            if (in_array(strtolower($parts['host']), ['localhost', '127.0.0.1', 'ubiquitiunifikenya.co.ke', 'www.ubiquitiunifikenya.co.ke'], true)) {
+                return self::normalize($url);
+            }
+
             return $url;
         }
 
@@ -44,6 +50,10 @@ class CanonicalUrl
         }
 
         $baseParts = parse_url((string) config('app.canonical_url')) ?: [];
+        // Public requests must never inherit a development URL from a stale .env.
+        if (in_array(strtolower(request()->getHost()), ['ubiquitiunifikenya.co.ke', 'www.ubiquitiunifikenya.co.ke'], true)) {
+            $baseParts = parse_url(self::PRODUCTION_URL);
+        }
         $scheme = $baseParts['scheme'] ?? $parts['scheme'] ?? request()->getScheme();
         $host = $baseParts['host'] ?? $parts['host'] ?? request()->getHost();
         $port = isset($baseParts['port']) ? ':'.$baseParts['port'] : '';

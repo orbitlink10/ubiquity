@@ -152,7 +152,7 @@ class SeoEnhancementTest extends TestCase
         $response->assertHeader('Content-Type', 'application/xml');
         $response->assertSee('https://mikrotikkenya.co.ke/category/mikrotik-switches', false);
         $response->assertSee('https://mikrotikkenya.co.ke/product/'.$product->slug, false);
-        $response->assertSee('https://mikrotikkenya.co.ke/routeros-guide', false);
+        $response->assertSee('https://mikrotikkenya.co.ke/blog/routeros-guide', false);
         $response->assertDontSee('/admin', false);
         $response->assertDontSee('/checkout', false);
     }

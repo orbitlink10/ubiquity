@@ -86,7 +86,12 @@ class SeoMetadata
 
     public static function canonicalOverride(object $model): ?string
     {
-        return self::columnValue($model, 'canonical_url');
+        $url = self::columnValue($model, 'canonical_url');
+        if ($url && in_array(strtolower((string) parse_url($url, PHP_URL_HOST)), ['localhost', '127.0.0.1'], true)) {
+            return CanonicalUrl::normalize($url);
+        }
+
+        return $url;
     }
 
     public static function heading(object $model, string $fallback): string

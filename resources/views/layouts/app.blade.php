@@ -21,8 +21,27 @@
         $websiteSchema = \App\Support\StructuredData::website();
         $primaryNavItems = $homepageBrandContent->navMenuItems();
         $menuCategories = \Illuminate\Support\Facades\Schema::hasTable('categories')
-            ? \App\Models\Category::query()->whereNull('parent_id')->with('children')->orderBy('name')->get()
+            ? \App\Support\StorefrontCategories::menu()
             : collect();
+        $categoryMenuPaths = $menuCategories
+            ->map(fn ($category): string => rtrim((string) parse_url(route('category.show', $category), PHP_URL_PATH), '/'))
+            ->all();
+        $publishedCategoryPaths = \Illuminate\Support\Facades\Schema::hasTable('categories')
+            ? \App\Models\Category::query()
+                ->whereIn('id', \App\Support\StorefrontCategories::publishedIds())
+                ->get()
+                ->map(fn ($category): string => rtrim((string) parse_url(route('category.show', $category), PHP_URL_PATH), '/'))
+                ->all()
+            : [];
+        $unpublishedCategoryPaths = \Illuminate\Support\Facades\Schema::hasTable('categories')
+            ? array_values(array_diff(
+                \App\Models\Category::query()
+                    ->get()
+                    ->map(fn ($category): string => rtrim((string) parse_url(route('category.show', $category), PHP_URL_PATH), '/'))
+                    ->all(),
+                $publishedCategoryPaths
+            ))
+            : [];
     @endphp
     <title>{!! $pageTitle !!}</title>
     <meta name="description" content="{!! $pageDescription !!}">
@@ -87,7 +106,12 @@
             <div class="primary-nav-inner">
                 <a class="primary-nav-link" href="{{ route('home') }}">Home</a>
                 @foreach($primaryNavItems as $navItem)
-                    <a class="primary-nav-link" href="{{ $navItem['url'] }}">{{ $navItem['label'] }}</a>
+                    @php
+                        $navItemPath = rtrim((string) (parse_url($navItem['url'], PHP_URL_PATH) ?: $navItem['url']), '/');
+                    @endphp
+                    @unless(in_array($navItemPath, $unpublishedCategoryPaths, true))
+                        <a class="primary-nav-link" href="{{ $navItem['url'] }}">{{ $navItem['label'] }}</a>
+                    @endunless
                 @endforeach
             </div>
         </nav>
@@ -103,7 +127,14 @@
     <ul class="mobile-menu-list">
         <li><a class="mobile-menu-link" href="{{ route('home') }}">Home</a></li>
         @foreach($primaryNavItems as $navItem)
-            <li><a class="mobile-menu-link" href="{{ $navItem['url'] }}">{{ $navItem['label'] }}</a></li>
+            @php
+                $navItemPath = rtrim((string) (parse_url($navItem['url'], PHP_URL_PATH) ?: $navItem['url']), '/');
+                $skipMobileNavItem = in_array($navItemPath, $categoryMenuPaths, true)
+                    || in_array($navItemPath, $unpublishedCategoryPaths, true);
+            @endphp
+            @unless($skipMobileNavItem)
+                <li><a class="mobile-menu-link" href="{{ $navItem['url'] }}">{{ $navItem['label'] }}</a></li>
+            @endunless
         @endforeach
         @foreach($menuCategories as $menuCategory)
             @if($menuCategory->children->isNotEmpty())
