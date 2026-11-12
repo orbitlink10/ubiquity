@@ -363,6 +363,18 @@ SVG,
             </section>
         @endif
 
+        @if($homepageAccessPoints->isNotEmpty())
+            <div class="featured-rows-head">
+                <h2>Shop Ubiquiti Access Points</h2>
+                <a class="featured-rows-link" href="{{ route('category.show', $homepageAccessPointCategory) }}">View all &rarr;</a>
+            </div>
+            <section class="products-grid products-grid--router-rows" aria-label="Ubiquiti Access Points">
+                @foreach($homepageAccessPoints as $product)
+                    @include('partials.product-card', ['product' => $product, 'productImageFallback' => $productImageFallback])
+                @endforeach
+            </section>
+        @endif
+
         @if($showFeaturedProductRows)
             <div class="featured-rows-head">
                 <h2>{{ $homepageProductCategory ? 'Shop Ubiquiti Routers' : 'Popular Ubiquiti Products' }}</h2>

@@ -281,6 +281,24 @@ class StorefrontController extends Controller
             $homepageFeaturedProducts = collect();
         }
 
+        $homepageAccessPointCategory = $search === '' && ! $currentCategory
+            ? Category::query()->where('slug', 'ubiquiti-access-points')->first()
+            : null;
+        $homepageAccessPoints = collect();
+
+        if ($homepageAccessPointCategory) {
+            $accessPointsQuery = Product::query()
+                ->with(['vendor', 'category', 'images' => fn ($query) => $query->orderByDesc('is_primary')->orderBy('sort_order')])
+                ->active();
+            $this->constrainProductsToCategory($accessPointsQuery, $homepageAccessPointCategory);
+            $homepageAccessPoints = $accessPointsQuery->latest()->limit(6)->get();
+
+            $homepageFeaturedProducts = $homepageFeaturedProducts
+                ->whereNotIn('id', $homepageAccessPoints->modelKeys())
+                ->values();
+            $productsQuery->whereNotIn('id', $homepageAccessPoints->modelKeys());
+        }
+
         if ($homepageFeaturedProducts->isNotEmpty()) {
             $productsQuery->whereNotIn('id', $homepageFeaturedProducts->modelKeys());
         }
@@ -333,6 +351,8 @@ class StorefrontController extends Controller
             'homepageContent' => HomepageContent::current(),
             'homepageProductCategory' => $homepageProductCategory,
             'homepageFeaturedProducts' => $homepageFeaturedProducts,
+            'homepageAccessPointCategory' => $homepageAccessPointCategory,
+            'homepageAccessPoints' => $homepageAccessPoints,
             'products' => $products,
             'articleResults' => $this->articleSearchResults($search),
             'search' => $search,
